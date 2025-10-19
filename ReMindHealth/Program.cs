@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ReMindHealth.Components;
 using ReMindHealth.Components.Account;
 using ReMindHealth.Data;
-
+using ReMindHealth.Services.Implementations;
+using ReMindHealth.Services.Interfaces;
+using Radzen;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -35,6 +37,26 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+// Add Radzen services
+builder.Services.AddRadzenComponents();
+
+// Add application services.
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Add repositories
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IConversationService, ConversationService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<INoteService, NoteService>();
+
+// Add services
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IConversationService, ConversationService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<INoteService, NoteService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -60,5 +82,12 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+// Ensure database is created and all migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 app.Run();
