@@ -1,373 +1,81 @@
 ﻿@page "/"
+@attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @using ReMindHealth.Models
-@using ReMindHealth.Services.Interfaces
-@attribute [Authorize]
-@inject IConversationService ConversationService
-@inject IAppointmentService AppointmentService
-@inject ITaskService TaskService
-@inject INoteService NoteService
-@inject ICurrentUserService CurrentUserService
-@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
 
-<PageTitle>Dashboard - ReMind Health</PageTitle>
+<PageTitle>Memory Builder - Neue Aufnahme</PageTitle>
 
-<RadzenStack Gap="1.5rem">
 
-    <!-- Welcome Header -->
-    <RadzenCard>
-        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
-            <div>
-                <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" class="rz-mb-0">
-                    Willkommen zurück, @userName! 👋
-                </RadzenText>
-                <RadzenText TextStyle="TextStyle.Body2" class="rz-text-secondary-color">
-                    @DateTime.Now.ToString("dddd, dd. MMMM yyyy", new System.Globalization.CultureInfo("de-DE"))
-                </RadzenText>
+<RadzenRow Gap="1.5rem" class="main-content">
+    <RadzenColumn Size="12" SizeLG="8">
+        <!-- Recording Card -->
+        <RadzenCard class="recording-card">
+            <div class="card-header">
+                <h2>Neue Aufnahme</h2>
+                <div class="status-indicator">
+                    <span class="status-dot @(isRecording ? "recording" : "ready")"></span>
+                    <span class="status-text">@(isRecording ? "Aufnahme läuft" : "Bereit")</span>
+                </div>
             </div>
-            <RadzenButton Icon="mic"
-                          Text="Neue Aufnahme"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Size="ButtonSize.Large"
-                          Click="@(() => Navigation.NavigateTo("/new-recording"))" />
-        </RadzenStack>
-    </RadzenCard>
 
-    @if (isLoading)
-    {
-        <RadzenCard>
-            <div style="text-align: center; padding: 3rem;">
-                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-                <RadzenText TextStyle="TextStyle.Body1" class="rz-mt-4">Lädt Dashboard...</RadzenText>
+            <div class="recording-controls">
+                <RadzenButton ButtonStyle="@(isRecording? ButtonStyle.Danger: ButtonStyle.Primary)"
+                              Size="ButtonSize.Large"
+                              Click="@ToggleRecording"
+                              Icon="@(isRecording ? "stop" : "mic")"
+                              Text="@(isRecording ? "Aufnahme stoppen" : "Aufnahme starten")"
+                              class="recording-button" />
+
+                <div class="recording-info">
+                    <div class="info-item">
+                        <div class="info-value">@recordingDuration</div>
+                        <div class="info-label">Dauer</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">@audioLevel</div>
+                        <div class="info-label">Pegel</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">DE</div>
+                        <div class="info-label">Sprache</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-section">
+                @if (showTranscriptionReview)
+                {
+                    <RadzenLabel Text="Transkribierter Text (bearbeitbar)" />
+                    <p>showTranscriptionReview: @showTranscriptionReview</p>
+                    <p>transcriptionText length: @transcriptionText.Length</p>
+                    <RadzenTextArea @bind-Value="transcriptionText"
+                                    Rows="8"
+                                    Style="width: 100%; font-family: monospace;"
+                                    Placeholder="Transkription wird geladen..." />
+
+                    <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+                        <RadzenButton Text="Verarbeitung starten"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Icon="check"
+                                      Click="@StartProcessing" />
+                        <RadzenButton Text="Abbrechen"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Icon="close"
+                                      Click="@CancelProcessing" />
+                    </div>
+                }
+                else
+                {
+                    <RadzenLabel Text="Notiz (optional)" />
+                    <RadzenTextBox @bind-Value="noteText"
+                                   Placeholder="z. B. Arztgespräch – Blutdruck"
+                                   Style="width: 100%;" />
+                }
             </div>
         </RadzenCard>
-    }
-    else
-    {
-        <!-- Stats Row -->
-        <RadzenRow Gap="1rem">
-            <RadzenColumn Size="12" SizeMD="3">
-                <RadzenCard Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                    <RadzenStack Gap="0.5rem">
-                        <RadzenIcon Icon="chat" Style="font-size: 2rem;" />
-                        <RadzenText TextStyle="TextStyle.H3" class="rz-mb-0">@totalConversations</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">Gespräche</RadzenText>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
 
-            <RadzenColumn Size="12" SizeMD="3">
-                <RadzenCard Style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                    <RadzenStack Gap="0.5rem">
-                        <RadzenIcon Icon="event" Style="font-size: 2rem;" />
-                        <RadzenText TextStyle="TextStyle.H3" class="rz-mb-0">@upcomingAppointments.Count</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">Anstehende Termine</RadzenText>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
+    </RadzenColumn>
 
-            <RadzenColumn Size="12" SizeMD="3">
-                <RadzenCard Style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                    <RadzenStack Gap="0.5rem">
-                        <RadzenIcon Icon="checklist" Style="font-size: 2rem;" />
-                        <RadzenText TextStyle="TextStyle.H3" class="rz-mb-0">@pendingTasks.Count</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">Offene Aufgaben</RadzenText>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <RadzenColumn Size="12" SizeMD="3">
-                <RadzenCard Style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
-                    <RadzenStack Gap="0.5rem">
-                        <RadzenIcon Icon="push_pin" Style="font-size: 2rem;" />
-                        <RadzenText TextStyle="TextStyle.H3" class="rz-mb-0">@pinnedNotes.Count</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">Wichtige Notizen</RadzenText>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <!-- Main Content Row -->
-        <RadzenRow Gap="1rem">
-
-            <!-- Left Column - Recent Conversations -->
-            <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard Style="height: 100%;">
-                    <RadzenStack Gap="1rem">
-                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-mb-0">
-                                <RadzenIcon Icon="chat" /> Letzte Gespräche
-                            </RadzenText>
-                            <RadzenButton Text="Alle anzeigen"
-                                          ButtonStyle="ButtonStyle.Light"
-                                          Size="ButtonSize.Small"
-                                          Click="@(() => Navigation.NavigateTo("/conversations"))" />
-                        </RadzenStack>
-
-                        @if (!recentConversations.Any())
-                        {
-                            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
-                                <RadzenText>Noch keine Gespräche vorhanden.</RadzenText>
-                                <RadzenText TextStyle="TextStyle.Body2">
-                                    Starten Sie Ihre erste Aufnahme!
-                                </RadzenText>
-                            </RadzenAlert>
-                        }
-                        else
-                        {
-                            <RadzenDataList Data="@recentConversations" TItem="Conversation">
-                                <Template Context="conversation">
-                                    <RadzenCard Style="cursor: pointer; margin-bottom: 0.5rem;"
-                                                @onclick="@(() => Navigation.NavigateTo($"/conversation/{conversation.ConversationId}"))">
-                                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                            <div style="flex: 1;">
-                                                <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mb-0">
-                                                    @conversation.Title
-                                                </RadzenText>
-                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-text-secondary-color">
-                                                    @conversation.RecordedAt.ToString("dd.MM.yyyy HH:mm")
-                                                </RadzenText>
-                                            </div>
-                                            <RadzenBadge BadgeStyle="@GetStatusBadgeStyle(conversation.ProcessingStatus)"
-                                                         Text="@conversation.ProcessingStatus" />
-                                        </RadzenStack>
-                                    </RadzenCard>
-                                </Template>
-                            </RadzenDataList>
-                        }
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <!-- Right Column - Upcoming Appointments -->
-            <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard Style="height: 100%;">
-                    <RadzenStack Gap="1rem">
-                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-mb-0">
-                                <RadzenIcon Icon="event" /> Anstehende Termine
-                            </RadzenText>
-                            <RadzenButton Text="Alle anzeigen"
-                                          ButtonStyle="ButtonStyle.Light"
-                                          Size="ButtonSize.Small"
-                                          Click="@(() => Navigation.NavigateTo("/appointments"))" />
-                        </RadzenStack>
-
-                        @if (!upcomingAppointments.Any())
-                        {
-                            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
-                                Keine anstehenden Termine
-                            </RadzenAlert>
-                        }
-                        else
-                        {
-                            <RadzenDataList Data="@upcomingAppointments" TItem="ExtractedAppointment">
-                                <Template Context="appointment">
-                                    <RadzenCard Style="margin-bottom: 0.5rem;">
-                                        <RadzenStack Gap="0.5rem">
-                                            <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mb-0">
-                                                @appointment.Title
-                                            </RadzenText>
-                                            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem">
-                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-text-secondary-color">
-                                                    <RadzenIcon Icon="schedule" Style="font-size: 1rem; vertical-align: middle;" />
-                                                    @appointment.AppointmentDateTime.ToString("dd.MM.yyyy HH:mm")
-                                                </RadzenText>
-                                                @if (!string.IsNullOrEmpty(appointment.Location))
-                                                {
-                                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-text-secondary-color">
-                                                        <RadzenIcon Icon="place" Style="font-size: 1rem; vertical-align: middle;" />
-                                                        @appointment.Location
-                                                    </RadzenText>
-                                                }
-                                            </RadzenStack>
-                                            @if (!appointment.IsConfirmed)
-                                            {
-                                                <RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="Nicht bestätigt" />
-                                            }
-                                        </RadzenStack>
-                                    </RadzenCard>
-                                </Template>
-                            </RadzenDataList>
-                        }
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <!-- Bottom Row -->
-        <RadzenRow Gap="1rem">
-
-            <!-- Pending Tasks -->
-            <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard>
-                    <RadzenStack Gap="1rem">
-                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-mb-0">
-                                <RadzenIcon Icon="checklist" /> Offene Aufgaben
-                            </RadzenText>
-                            <RadzenButton Text="Alle anzeigen"
-                                          ButtonStyle="ButtonStyle.Light"
-                                          Size="ButtonSize.Small"
-                                          Click="@(() => Navigation.NavigateTo("/tasks"))" />
-                        </RadzenStack>
-
-                        @if (!pendingTasks.Any())
-                        {
-                            <RadzenAlert AlertStyle="AlertStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter">
-                                🎉 Keine offenen Aufgaben!
-                            </RadzenAlert>
-                        }
-                        else
-                        {
-                            <RadzenDataList Data="@pendingTasks.Take(5)" TItem="ExtractedTask">
-                                <Template Context="task">
-                                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Style="margin-bottom: 0.5rem;">
-                                        <div>
-                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-mb-0">
-                                                @task.Title
-                                            </RadzenText>
-                                            @if (task.DueDate.HasValue)
-                                            {
-                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-text-secondary-color">
-                                                    Fällig: @task.DueDate.Value.ToString("dd.MM.yyyy")
-                                                </RadzenText>
-                                            }
-                                        </div>
-                                        <RadzenBadge BadgeStyle="@GetPriorityBadgeStyle(task.Priority)"
-                                                     Text="@task.Priority" />
-                                    </RadzenStack>
-                                </Template>
-                            </RadzenDataList>
-                        }
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <!-- Pinned Notes -->
-            <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard>
-                    <RadzenStack Gap="1rem">
-                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-mb-0">
-                                <RadzenIcon Icon="push_pin" /> Wichtige Notizen
-                            </RadzenText>
-                            <RadzenButton Text="Alle anzeigen"
-                                          ButtonStyle="ButtonStyle.Light"
-                                          Size="ButtonSize.Small"
-                                          Click="@(() => Navigation.NavigateTo("/notes"))" />
-                        </RadzenStack>
-
-                        @if (!pinnedNotes.Any())
-                        {
-                            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
-                                Keine wichtigen Notizen angepinnt
-                            </RadzenAlert>
-                        }
-                        else
-                        {
-                            <RadzenDataList Data="@pinnedNotes.Take(5)" TItem="ExtractedNote">
-                                <Template Context="note">
-                                    <RadzenCard Style="margin-bottom: 0.5rem;" Variant="Variant.Outlined">
-                                        <RadzenStack Gap="0.25rem">
-                                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
-                                                @if (!string.IsNullOrEmpty(note.Title))
-                                                {
-                                                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-mb-0">
-                                                        @note.Title
-                                                    </RadzenText>
-                                                }
-                                                <RadzenBadge BadgeStyle="@GetNoteTypeBadgeStyle(note.NoteType)"
-                                                             Text="@note.NoteType"
-                                                             Variant="Variant.Outlined" />
-                                            </RadzenStack>
-                                            <RadzenText TextStyle="TextStyle.Body2">
-                                                @(note.Content.Length > 100 ? note.Content.Substring(0, 100) + "..." : note.Content)
-                                            </RadzenText>
-                                        </RadzenStack>
-                                    </RadzenCard>
-                                </Template>
-                            </RadzenDataList>
-                        }
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-    }
-</RadzenStack>
-
-@code {
-    private bool isLoading = true;
-    private string userName = "";
-    private int totalConversations;
-
-    private List<Conversation> recentConversations = new();
-    private List<ExtractedAppointment> upcomingAppointments = new();
-    private List<ExtractedTask> pendingTasks = new();
-    private List<ExtractedNote> pinnedNotes = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // Get user name
-            userName = await CurrentUserService.GetUserFullNameAsync() ?? "Benutzer";
-
-            // Load all dashboard data
-            var conversationsTask = ConversationService.GetUserConversationsAsync();
-            var recentTask = ConversationService.GetRecentConversationsAsync(5);
-            var appointmentsTask = AppointmentService.GetUpcomingAppointmentsAsync(30);
-            var tasksTask = TaskService.GetPendingTasksAsync();
-            var notesTask = NoteService.GetPinnedNotesAsync();
-
-            await Task.WhenAll(conversationsTask, recentTask, appointmentsTask, tasksTask, notesTask);
-
-            totalConversations = conversationsTask.Result.Count;
-            recentConversations = recentTask.Result;
-            upcomingAppointments = appointmentsTask.Result;
-            pendingTasks = tasksTask.Result;
-            pinnedNotes = notesTask.Result;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading dashboard: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private BadgeStyle GetStatusBadgeStyle(string status)
-    {
-        return status switch
-        {
-            "Completed" => BadgeStyle.Success,
-            "Processing" => BadgeStyle.Info,
-            "Failed" => BadgeStyle.Danger,
-            _ => BadgeStyle.Secondary
-        };
-    }
-
-    private BadgeStyle GetPriorityBadgeStyle(string priority)
-    {
-        return priority switch
-        {
-            "Urgent" => BadgeStyle.Danger,
-            "High" => BadgeStyle.Warning,
-            "Medium" => BadgeStyle.Info,
-            _ => BadgeStyle.Secondary
-        };
-    }
-
-    private BadgeStyle GetNoteTypeBadgeStyle(string noteType)
-    {
-        return noteType switch
-        {
-            "Medication" => BadgeStyle.Danger,
-            "Warning" => BadgeStyle.Warning,
-            "Important" => BadgeStyle.Info,
-            _ => BadgeStyle.Light
-        };
-    }
-}
+</RadzenRow>

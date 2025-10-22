@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using ReMindHealth.Components;
 using ReMindHealth.Components.Account;
 using ReMindHealth.Data;
+using ReMindHealth.Services;
 using ReMindHealth.Services.Implementations;
 using ReMindHealth.Services.Interfaces;
-using Radzen;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -40,22 +41,28 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 // Add Radzen services
 builder.Services.AddRadzenComponents();
 
-// Add application services.
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 100 * 1024 * 1024; // 100MB instead of 10MB
+        options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
+        options.HandshakeTimeout = TimeSpan.FromMinutes(2);
+    });
 
-// Add repositories
+// User and business services
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<INoteService, NoteService>();
 
-// Add services
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<IConversationService, ConversationService>();
-builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<INoteService, NoteService>();
+// Whisper service with HttpClient for model download
+builder.Services.AddHttpClient<IWhisperService, WhisperService>();
+builder.Services.AddSingleton<IWhisperService, WhisperService>();
+
+// Extraction service (Ollama) with HttpClient
+builder.Services.AddHttpClient<IExtractionService, ExtractionService>(client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(3);
+});
+builder.Services.AddScoped<IExtractionService, ExtractionService>();
 
 var app = builder.Build();
 
