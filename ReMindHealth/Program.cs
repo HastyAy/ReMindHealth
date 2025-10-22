@@ -5,7 +5,6 @@ using Radzen;
 using ReMindHealth.Components;
 using ReMindHealth.Components.Account;
 using ReMindHealth.Data;
-using ReMindHealth.Services;
 using ReMindHealth.Services.Implementations;
 using ReMindHealth.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);

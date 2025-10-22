@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: remindhealth-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Pass321@strongone
+      - MSSQL_PID=Developer
+      - MSSQL_MEMORY_LIMIT_MB=2048
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - remindhealth-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Pass321@strongone -Q "SELECT 1" -C || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Ollama for AI extraction
+  ollama:
+    image: ollama/ollama:latest
+    container_name: remindhealth-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - remindhealth-network
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ReMindHealth Web Application
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: remindhealth-webapp
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ReMindHealthDb;User Id=sa;Password=Pass321@strongone;TrustServerCertificate=True;
+      - Ollama__ApiUrl=http://ollama:11434
+      - Ollama__ModelName=llama3.2
+      - AudioStorage__Path=/app/wwwroot/audio
+    ports:
+      - "5000:8080"
+    volumes:
+      - audio_data:/app/wwwroot/audio
+      - whisper_models:/root/.whisper
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    networks:
+      - remindhealth-network
+    restart: unless-stopped
+
+  # Ollama Model Loader (runs once to pull the model)
+  ollama-setup:
+    image: ollama/ollama:latest
+    container_name: remindhealth-ollama-setup
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      echo 'Waiting for Ollama to be ready...';
+      sleep 30;
+      echo 'Pulling llama3.2 model...';
+      ollama pull llama3.2;
+      echo 'Model pulled successfully!';
+      "
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - remindhealth-network
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+
+networks:
+  remindhealth-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:
+    driver: local
+  ollama_data:
+    driver: local
+  audio_data:
+    driver: local
+  whisper_models:
+    driver: local
