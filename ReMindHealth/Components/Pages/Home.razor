@@ -77,5 +77,119 @@
         </RadzenCard>
 
     </RadzenColumn>
+    
+     <!-- Erkannte Termine -->
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenCard class="result-card">
+            <div class="card-header">
+                <h3>📅 Erkannte Termine</h3>
+                <span class="badge">2</span>
+            </div>
+
+            <div class="result-list">
+                <div class="result-item">
+                    <div class="result-body">
+                        <div class="result-title">Kontrolltermin</div>
+                        <div class="result-sub">Do, 20.11.2025 · 10:00–10:30 · Praxis Dr. Müller</div>
+                    </div>
+                    <div class="result-actions">
+                        <RadzenButton Text="Zum Kalender hinzufügen"
+                                      Icon="event"
+                                      Size="ButtonSize.Small" />
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-body">
+                        <div class="result-title">Team-Meeting</div>
+                        <div class="result-sub">Mo, 24.11.2025 · 14:00–15:00 · Online</div>
+                    </div>
+                    <div class="result-actions">
+                        <RadzenButton Text="Zum Kalender hinzufügen"
+                                      Icon="event"
+                                      Size="ButtonSize.Small" />
+                    </div>
+                </div>
+            </div>
+        </RadzenCard>
+    </RadzenColumn>
+     <!-- Wichtige Hinweise / Todos -->
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenCard class="result-card">
+            <div class="card-header">
+                <h3>✅ Wichtige Hinweise</h3>
+                <span class="badge">2</span>
+            </div>
+
+            <div class="result-list">
+                <div class="result-item">
+                    <div class="result-body">
+                        <div class="result-title">Blutdruck täglich messen</div>
+                        <div class="result-sub">Erinnerung: täglich 08:00</div>
+                    </div>
+                    <div class="result-actions">
+                        <RadzenButton Text="Erinnerung setzen"
+                                      Icon="notifications"
+                                      Size="ButtonSize.Small" />
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-body">
+                        <div class="result-title">Laborwerte per E-Mail senden</div>
+                        <div class="result-sub">Bis: 22.11.2025</div>
+                    </div>
+                    <div class="result-actions">
+                        <RadzenButton Text="Erinnerung setzen"
+                                      Icon="notifications"
+                                      Size="ButtonSize.Small" />
+                    </div>
+                </div>
+            </div>
+        </RadzenCard>
+    </RadzenColumn>
+        <!-- Gesprächszusammenfassung -->
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenCard class="result-card">
+            <div class="card-header">
+                <h3>📝 Gesprächszusammenfassung</h3>
+            </div>
+
+            <div class="summary-content">
+                <p>
+                    Beim heutigen Arztgespräch wurde der Blutdruck besprochen.  
+                    Der Patient soll den Blutdruck täglich messen und die Werte beim nächsten Termin mitbringen.  
+                    Nächster Kontrolltermin ist am 20.11.2025 um 10:00 Uhr.
+                </p>
+
+                <RadzenButton Text="Zusammenfassung speichern"
+                              Icon="save"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="margin-top: 0.75rem;" />
+            </div>
+        </RadzenCard>
+    </RadzenColumn>
+      <!-- Krankheiten suchen -->
+    <RadzenColumn Size="12" SizeLG="6">
+        <RadzenCard class="result-card">
+            <div class="card-header">
+                <h3>🔍 Krankheiten suchen</h3>
+            </div>
+
+            <div class="search-section">
+                <RadzenTextBox Placeholder="z. B. Bluthochdruck, Diabetes..."
+                               Style="width: 100%; margin-bottom: 0.75rem;" />
+                <RadzenButton Text="Suchen"
+                              Icon="search"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="width: 100%;" />
+
+                <div class="search-result" style="margin-top:1rem;">
+                    <p><strong>Bluthochdruck</strong> – Eine chronische Erkrankung, bei der der Blutdruck dauerhaft erhöht ist.  
+                    Regelmäßige Kontrolle und gesunde Lebensweise werden empfohlen.</p>
+                </div>
+            </div>
+        </RadzenCard>
+    </RadzenColumn>
 
 </RadzenRow>

@@ -274,3 +274,159 @@
 .mt-4 {
     margin-top: 1.5rem;
 }
+
+.result-card .card-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.5rem;
+  margin-bottom:.75rem;
+}
+
+.badge {
+  background:#eef2ff;
+  color:#3730a3;
+  font-size:.75rem;
+  padding:.2rem .5rem;
+  border-radius:.5rem;
+}
+
+.result-list {
+  display:flex;
+  flex-direction:column;
+  gap:.75rem;
+}
+
+.result-item {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.75rem;
+  border:1px solid #e5e7eb;
+  border-radius:.75rem;
+  padding:.75rem;
+}
+
+.result-title {
+  font-weight:600;
+}
+
+.result-sub {
+  font-size:.85rem;
+  color:#6b7280;
+  margin-top:.15rem;
+}
+/* Karten-Header */
+.result-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Kleine Zahl rechts im Header (z. B. "2") */
+.badge {
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Liste der Ergebnisse (Termine, Todos) */
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Einzelner Eintrag */
+.result-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover-Effekt */
+.result-item:hover {
+  background-color: #f9fafb;
+  transform: translateY(-1px);
+}
+
+/* Titel („Blutdruck täglich messen“) */
+.result-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Zusatzinfo („täglich 08:00“ oder Datum) */
+.result-sub {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.15rem;
+}
+
+/* Abstand der Buttons */
+.result-actions .rz-button {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+}
+
+/* Optional: Schatten für die ganze Karte */
+.result-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: white;
+  padding: 1rem;
+}
+
+/* Allgemeine Karten-Optik */
+.result-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: white;
+  padding: 1rem;
+}
+
+/* Header-Titel */
+.result-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Zusammenfassungstext */
+.summary-content p {
+  font-size: 0.95rem;
+  color: #374151;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+/* Suchbereich */
+.search-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result {
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+
