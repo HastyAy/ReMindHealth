@@ -1,0 +1,30 @@
+@page "/intro2"
+@using ReMindHealth.Components.Layout
+@layout AppLayout
+
+@inject NavigationManager NavigationManager
+
+<div class="app-frame">
+    <div class="intro2-container">
+        <img src="images/doctor_mic.png" alt="Arztgespräch Illustration" class="doctor_mic-logo" />
+
+        <h2>Besser verstehen, was Ihr Arzt sagt.</h2>
+
+        <p class="text">
+            Unsere App erkennt medizinische Themen in Ihrem Arztgespräch,
+            fasst sie automatisch zusammen und erklärt sie leicht verständlich.
+        </p>
+
+        <p class="note">Sicher und datenschutzkonform.</p>
+
+        <button type="button" class="next-btn" @onclick="GoNext">Los geht’s</button>
+    </div>
+</div>
+
+@code {
+    void GoNext()
+    {
+        NavigationManager.NavigateTo("/intro3");
+    }
+}
+

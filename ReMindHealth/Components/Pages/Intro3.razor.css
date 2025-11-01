@@ -1,0 +1,104 @@
+/* Gesamter Bildschirm – Handy-Layout */
+.app-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+    padding: 1rem;
+}
+
+/* Weißer App-Container */
+.intro3-container {
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    overflow-y: auto;
+}
+
+/* Logo */
+.privacy-logo {
+    width: 260px;
+    height: auto;
+    display: block;
+    margin: 0 auto 1.5rem auto;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+}
+
+/* Textabschnitte */
+.description {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+/* Listen */
+.info-list {
+    font-size: 0.9rem;
+    color: #333;
+    margin-left: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.privacy-link {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.privacy-link a {
+    color: #2f76d2;
+    text-decoration: none;
+}
+
+/* Checkboxen */
+.checkboxes label {
+    display: block;
+    font-size: 0.85rem;
+    color: #333;
+    margin-bottom: 0.6rem;
+}
+
+/* Button */
+.agree-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 4px 8px rgba(0,120,212,0.3);
+    transition: all 0.2s ease;
+}
+
+.agree-btn:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .intro3-container {
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .privacy-logo {
+        width: 220px;
+    }
+}
