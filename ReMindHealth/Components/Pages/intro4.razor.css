@@ -1,0 +1,129 @@
+/* Gesamt-Layout */
+.app-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f3f4f6;
+    padding: 1rem;
+}
+
+/* Weißer Handy-Container */
+.home-container {
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    overflow-y: auto;
+}
+
+/* Überschrift */
+.greeting {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* 4 Feature-Kacheln */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 90px;
+    height: 80px;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    font-weight: 600;
+    color: #111;
+    font-size: 0.9rem;
+}
+
+/* Abschnitt: Letzte Zusammenfassungen */
+.summary-section {
+    margin-top: 1.5rem;
+}
+
+.summary-section h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Karte */
+.summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff; /* etwas heller als dein #f9fafb */
+    border-radius: 1rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.summary-icon {
+    width: 45px;
+    height: 45px;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+/* Text mittig (Titel + Datum) */
+.summary-info {
+    flex: 1;
+}
+
+.summary-title {
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+
+.summary-date {
+    font-size: 0.85rem;
+    color: #666;
+     margin: 0.2rem 0 0 0;
+}
+
+.summary-arrow {
+    font-size: 1.4rem;
+    color: #100606;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .home-container {
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}

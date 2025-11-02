@@ -1,0 +1,94 @@
+/* Gesamter Bildschirm – Handy-Ansicht */
+.app-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+    padding: 1rem;
+}
+
+/* Weißer Handy-Kasten */
+.intro2-container {
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh; /* fast voller Bildschirm */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt mittig */
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* Bild */
+.doctor_mic-logo {
+    width: 260px;
+    height: auto;
+    margin-bottom: 2rem;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+}
+
+/* Titel */
+h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 1rem;
+}
+
+/* Textabsatz */
+.text {
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 360px;
+}
+
+/* Hinweis unten */
+.note {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Button */
+.next-btn {
+    background-color: #0078D4;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+.next-btn:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .intro2-container {
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .doctor_mic-logo {
+        width: 200px;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+}

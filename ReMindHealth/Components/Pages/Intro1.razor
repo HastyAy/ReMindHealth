@@ -1,0 +1,29 @@
+@page "/intro1"
+@using ReMindHealth.Components.Layout
+@layout AppLayout
+
+
+@inject NavigationManager NavigationManager
+
+<div class="app-frame">
+    <div class="intro1-container">
+        <img src="images/remind_logo.png" alt="ReMindHealth Logo" class="remind-logo" />
+        <p class="subtitle">Klarheit für Ihre Gesundheit</p>
+    </div>
+</div>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    Console.WriteLine("Intro1 geladen...");
+
+    if (firstRender)
+    {
+        await Task.Delay(3000);
+        await InvokeAsync(() =>
+        {
+            Console.WriteLine("Navigation startet...");
+            NavigationManager.NavigateTo("/intro2");
+        });
+    }
+}
+}
