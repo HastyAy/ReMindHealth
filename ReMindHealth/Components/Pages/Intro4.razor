@@ -1,9 +1,11 @@
 @page "/Intro4"
+@using System
 
 <div class="app-frame">
     <div class="home-container">
-        <h2 class="greeting">Guten Morgen 👋</h2>
+        <h2 class="greeting">@greeting</h2>
 
+        <!-- 4 Feature-Kacheln -->
         <div class="button-grid">
             <div class="feature-card">
                 <img src="images/aufnahmen.png" alt="Aufnahmen" class="feature-icon" />
@@ -26,6 +28,7 @@
             </div>
         </div>
 
+        <!-- Letzte Zusammenfassungen -->
         <div class="summary-section">
             <h3>Letzte Zusammenfassungen</h3>
 
@@ -35,7 +38,7 @@
                     <p class="summary-title">Influenza</p>
                     <p class="summary-date">15 Okt. 2025</p>
                 </div>
-                 <span class="summary-arrow">›</span>
+                <span class="summary-arrow">›</span>
             </div>
 
             <div class="summary-card">
@@ -49,3 +52,28 @@
         </div>
     </div>
 </div>
+
+@code {
+    private string greeting = "";
+
+    protected override void OnInitialized()
+    {
+        // Deutsche Zeitzone erzwingen
+        var berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+        DateTime berlinTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, berlinTimeZone);
+        int hour = berlinTime.Hour;
+
+        if (hour >= 6 && hour < 12)
+        {
+            greeting = "Guten Morgen 👋";
+        }
+        else if (hour >= 12 && hour < 18)
+        {
+            greeting = "Guten Mittag ☀️";
+        }
+        else
+        {
+            greeting = "Guten Abend 🌙";
+        }
+    }
+}
