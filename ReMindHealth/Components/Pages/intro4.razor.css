@@ -32,7 +32,7 @@
     text-align: center;
 }
 
-/* 4 Feature-Kacheln */
+/* Grid der 4 Feature-Kacheln */
 .button-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -40,6 +40,7 @@
     margin-bottom: 2rem;
 }
 
+/* Feature-Karten */
 .feature-card {
     background-color: #ffffff;
     border-radius: 1rem;
@@ -47,6 +48,10 @@
     padding: 1rem;
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 160px; /* gleiche Höhe */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .feature-card:hover {
@@ -54,10 +59,13 @@
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
 }
 
+/* Icons (nicht verzerrt) */
 .feature-icon {
-    width: 90px;
+    width: 80px;
     height: 80px;
-    margin-bottom: 0.5rem;
+    object-fit: contain; /* behält Seitenverhältnis */
+    display: block;
+    margin: 0 auto 0.5rem auto;
 }
 
 .feature-card p {
@@ -77,17 +85,22 @@
     margin-bottom: 1rem;
 }
 
-/* Karte */
+/* Karten für Zusammenfassungen */
 .summary-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #ffffff; /* etwas heller als dein #f9fafb */
+    background-color: #ffffff;
     border-radius: 1rem;
     padding: 1rem 1.2rem;
     margin-bottom: 0.8rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 .summary-icon {
@@ -111,7 +124,7 @@
 .summary-date {
     font-size: 0.85rem;
     color: #666;
-     margin: 0.2rem 0 0 0;
+    margin: 0.2rem 0 0 0;
 }
 
 .summary-arrow {
