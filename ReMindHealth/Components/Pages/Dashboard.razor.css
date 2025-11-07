@@ -48,10 +48,11 @@
     padding: 1rem;
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 160px; /* gleiche Höhe */
+    height: 160px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    cursor: pointer;
 }
 
 .feature-card:hover {
@@ -59,11 +60,11 @@
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
 }
 
-/* Icons (nicht verzerrt) */
+/* Icons */
 .feature-icon {
     width: 80px;
     height: 80px;
-    object-fit: contain; /* behält Seitenverhältnis */
+    object-fit: contain;
     display: block;
     margin: 0 auto 0.5rem auto;
 }
@@ -74,7 +75,7 @@
     font-size: 0.9rem;
 }
 
-/* Abschnitt: Letzte Zusammenfassungen */
+/* Zusammenfassungen */
 .summary-section {
     margin-top: 1.5rem;
 }
@@ -85,7 +86,6 @@
     margin-bottom: 1rem;
 }
 
-/* Karten für Zusammenfassungen */
 .summary-card {
     display: flex;
     align-items: center;
@@ -96,6 +96,7 @@
     margin-bottom: 0.8rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
 }
 
 .summary-card:hover {
@@ -110,7 +111,6 @@
     flex-shrink: 0;
 }
 
-/* Text mittig (Titel + Datum) */
 .summary-info {
     flex: 1;
 }
@@ -132,7 +132,7 @@
     color: #100606;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 480px) {
     .home-container {
         height: 100vh;

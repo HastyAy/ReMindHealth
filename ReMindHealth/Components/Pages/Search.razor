@@ -1,0 +1,32 @@
+@page "/search"
+@using ReMindHealth.Components.Layout
+@layout AppLayout
+@inject IJSRuntime JS
+
+<div class="app-frame">
+    <div class="search-container">
+        <!-- Zurück-Pfeil oben links -->
+        <button class="zurueck-wrapper" @onclick="Zurueck">
+            <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+        </button>
+
+        <!-- Überschrift + Lupe rechts daneben -->
+        <div class="title-row">
+            <h3>Krankheiten/Diagnosen durchsuchen</h3>
+            <img src="images/lupe.png" alt="Lupe" class="lupe-icon" />
+        </div>
+
+        <p class="text">
+            Suchen Sie nach einer Krankheit, um eine einfache Erklärung zu erhalten.
+        </p>
+
+        <input class="krankheit-input" type="text" placeholder="Geben Sie den Namen einer Krankheit ein" />
+    </div>
+</div>
+
+@code {
+    async Task Zurueck()
+    {
+        await JS.InvokeVoidAsync("window.location.assign", "/Intro5-1");
+    }
+}

@@ -1,0 +1,69 @@
+/* Gesamter Bildschirm – Handy-Ansicht */
+.mobile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9fafc;
+}
+
+/* Weißer Handy-Kasten */
+.mobile-card {
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh; /* fast voller Bildschirm */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt mittig */
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* Button */
+.next-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 4px 8px rgba(0,120,212,0.3);
+    transition: all 0.2s ease;
+}
+
+.next-btn:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+}
+
+/* Bild */
+.mobile-image {
+    width: 120px;
+    margin: 0 auto 1rem auto;
+}
+
+/* Text */
+h3 {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.small-text {
+    font-size: 12px;
+    color: #888;
+}

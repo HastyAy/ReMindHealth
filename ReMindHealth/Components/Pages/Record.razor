@@ -1,0 +1,31 @@
+@page "/record"
+@using ReMindHealth.Components.Layout
+@layout AppLayout
+@inject NavigationManager NavigationManager
+
+<div class="app-frame">
+    <div class="record-container">
+        <!-- Zurück-Pfeil oben links -->
+        <button class="zurueck-wrapper" @onclick="Zurueck">
+            <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+        </button>
+
+        <img src="images/Mikrofon.png" alt="Mikrofon Bild" class="mikrofon-logo" />
+        <h3>Gespräch einfach aufnehmen</h3>
+        <p class="text">
+            Tippen Sie auf "Aufnahme starten", um Ihr Arztgespräch aufzuzeichnen.
+        </p>
+        <button type="button" class="aufnehmen" @onclick="Weiter">Aufnahme starten</button>
+    </div>
+</div>
+
+@code {
+    void Weiter()  => NavigationManager.NavigateTo("Home");
+    void Zurueck()
+    {   
+    Console.WriteLine("Zurück gedrückt!");
+    NavigationManager.NavigateTo("/Home");
+    }
+}
+
+

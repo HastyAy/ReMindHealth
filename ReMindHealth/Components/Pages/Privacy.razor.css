@@ -1,28 +1,27 @@
-/* Gesamter Bildschirm – Handy-Layout */
-.app-frame {
+/* Gesamter Bildschirm – Handy-Ansicht */
+.mobile-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
-    padding: 1rem;
+    background-color: #f9fafc;
 }
 
-/* Weißer App-Container */
-.intro3-container {
+/* Weißer Handy-Kasten */
+.mobile-card {
     background-color: #ffffff;
     border-radius: 2rem;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 430px;
-    height: 90vh;
+    height: 90vh; /* fast voller Bildschirm */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center; /* Inhalt mittig */
+    align-items: center;
+    text-align: center;
     padding: 2rem 1.5rem;
     font-family: "Segoe UI", system-ui, sans-serif;
-    overflow-y: auto;
 }
 
 /* Logo */
@@ -73,32 +72,25 @@
 .agree-btn {
     width: 100%;
     padding: 0.9rem;
-    background-color: #0078D4;
+    background-color: #ccc; /* Grau standard */
     color: white;
     border: none;
     border-radius: 12px;
     font-weight: 600;
     font-size: 1rem;
-    cursor: pointer;
+    cursor: not-allowed;
     margin-top: 1rem;
-    box-shadow: 0 4px 8px rgba(0,120,212,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: all 0.2s ease;
 }
 
-.agree-btn:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
+.agree-btn:enabled {
+    background-color: #0078D4;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,120,212,0.3);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .intro3-container {
-        height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    .privacy-logo {
-        width: 220px;
-    }
+.agree-btn:enabled:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
 }
