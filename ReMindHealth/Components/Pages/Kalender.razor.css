@@ -1,0 +1,88 @@
+.app-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f3f4f6;
+    padding: 1rem;
+}
+
+.home-container {
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    overflow-y: auto;
+}
+
+.greeting {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.summary-info {
+    flex: 1;
+}
+
+.summary-title {
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+
+.summary-date {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0.2rem 0 0 0;
+}
+
+.summary-arrow {
+    font-size: 1.4rem;
+    color: #100606;
+}
+
+.next-btn {
+    background-color: #0078D4;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
+    transition: all 0.2s ease-in-out;
+    margin-top: 1rem;
+}
+
+.next-btn:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+}

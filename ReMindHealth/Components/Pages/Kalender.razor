@@ -1,0 +1,32 @@
+@page "/kalender"
+@rendermode InteractiveServer
+
+<div class="app-frame">
+    <div class="home-container">
+        <h2 class="greeting">Termine</h2>
+
+        @if (termine.Count == 0)
+        {
+            <div style="text-align:center; margin-bottom:1.5rem;">
+                <p style="color:#666;">Aktuell keine Termine vorhanden</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var termin in termine)
+            {
+                <div class="summary-card" @onclick="@(() => NavigateToDetails(termin.Id))">
+                    <div class="summary-info">
+                        <p class="summary-title">@termin.Titel</p>
+                        <p class="summary-date">@termin.Datum.ToString("dd MMM yyyy") - @termin.Uhrzeit</p>
+                    </div>
+                    <span class="summary-arrow">›</span>
+                </div>
+            }
+        }
+
+        <button class="next-btn" @onclick="@(() => NavigateTo("/termin-erstellen"))">
+            <p>Termin manuell hinzufügen</p>
+        </button>
+    </div>
+</div>
