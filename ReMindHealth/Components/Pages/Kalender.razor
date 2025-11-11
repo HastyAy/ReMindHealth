@@ -3,30 +3,58 @@
 
 <div class="app-frame">
     <div class="home-container">
-        <h2 class="greeting">Termine</h2>
+        <h2 class="greeting">
+            <i class="bi bi-calendar3"></i> Termine
+        </h2>
 
-        @if (termine.Count == 0)
+        @if (termine == null || !termine.Any())
         {
-            <div style="text-align:center; margin-bottom:1.5rem;">
-                <p style="color:#666;">Aktuell keine Termine vorhanden</p>
+            <div class="no-appointments">
+                Es wurden noch keine Termine eingetragen
             </div>
         }
         else
         {
-            @foreach (var termin in termine)
-            {
-                <div class="summary-card" @onclick="@(() => NavigateToDetails(termin.Id))">
-                    <div class="summary-info">
-                        <p class="summary-title">@termin.Titel</p>
-                        <p class="summary-date">@termin.Datum.ToString("dd MMM yyyy") - @termin.Uhrzeit</p>
+            <div class="termin-list">
+                @foreach (var termin in termine)
+                {
+                    <div class="termin-item @(selectedTermin?.Id == termin.Id ? "active" : "")"
+                         @onclick="() => SelectTermin(termin)">
+                        @termin.Datum.ToString("dddd dd. MMM", new System.Globalization.CultureInfo("de-DE"))
                     </div>
-                    <span class="summary-arrow">›</span>
+                }
+            </div>
+
+            @if (selectedTermin != null)
+            {
+                <div class="termin-detail">
+                    @if (string.IsNullOrWhiteSpace(selectedTermin.Titel))
+                    {
+                        <div class="no-info">
+                            <i class="bi bi-plus-square-fill"></i>
+                            <p>Es wurden noch keine Informationen zu dem Termin eingetragen</p>
+                            <p class="hint">(Auf <b>„Termin bearbeiten“</b> klicken, um Informationen einzutragen)</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="termin-info">
+                            <i class="bi bi-plus-square-fill"></i>
+                            <h4>@selectedTermin.Titel</h4>
+                            <p class="termin-zeit">@selectedTermin.Uhrzeit</p>
+                            <p class="termin-adresse">@selectedTermin.Adresse</p>
+                        </div>
+                    }
+
+                    <button class="edit-btn" @onclick='() => NavigateTo($"/termin-bearbeiten/{selectedTermin.Id}")'>
+                        Termin bearbeiten
+                    </button>
                 </div>
             }
         }
 
-        <button class="next-btn" @onclick="@(() => NavigateTo("/termin-erstellen"))">
-            <p>Termin manuell hinzufügen</p>
+        <button class="next-btn" @onclick='() => NavigateTo("/termin-erstellen")'>
+            Termin manuell hinzufügen
         </button>
     </div>
 </div>
