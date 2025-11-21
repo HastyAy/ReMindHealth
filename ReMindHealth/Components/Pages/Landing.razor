@@ -1,0 +1,25 @@
+@page "/Landing"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@using ReMindHealth.Components.Layout
+@layout AppLayout
+
+
+<div class="mobile-wrapper">
+    <div class="mobile-card">
+        <img src="images/doctor_mic.png" alt="Arztgespräch Illustration" class="mobile-image" />
+        <h3>Besser verstehen, was Ihr Arzt sagt.</h3>
+        <p>
+            Unsere App erkennt medizinische Themen in Ihrem Arztgespräch,
+            fasst sie automatisch zusammen und erklärt sie leicht verständlich.
+        </p>
+        <p class="small-text">Sicher und datenschutzkonform.</p>
+
+        
+<button class="next-btn" @onclick="@(() => NavigateTo("/privacy"))">
+    Los geht’s
+</button>
+
+    </div>
+</div>
