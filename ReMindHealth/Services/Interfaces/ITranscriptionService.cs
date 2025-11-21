@@ -2,7 +2,7 @@
 
 namespace ReMindHealth.Services.Interfaces;
 
-public interface IWhisperService
+public interface ITranscriptionService
 {
     Task<TranscriptionResult> TranscribeAsync(string audioFilePath, CancellationToken cancellationToken = default);
 }

@@ -3,21 +3,21 @@ using Microsoft.EntityFrameworkCore;
 using ReMindHealth.Data;
 using ReMindHealth.Models;
 using ReMindHealth.Services.Interfaces;
+
 namespace ReMindHealth.Services.Implementations;
 
 public class ConversationService : IConversationService
 {
     private readonly ApplicationDbContext _context;
     private readonly ICurrentUserService _currentUserService;
-    private readonly IWhisperService _whisperService;
     private readonly IExtractionService _extractionService;
     private readonly ILogger<ConversationService> _logger;
     private readonly string _audioStoragePath;
     private readonly IServiceProvider _serviceProvider;
+
     public ConversationService(
         ApplicationDbContext context,
         ICurrentUserService currentUserService,
-        IWhisperService whisperService,
         IExtractionService extractionService,
         ILogger<ConversationService> logger,
         IConfiguration configuration,
@@ -25,7 +25,6 @@ public class ConversationService : IConversationService
     {
         _context = context;
         _currentUserService = currentUserService;
-        _whisperService = whisperService;
         _extractionService = extractionService;
         _logger = logger;
         _audioStoragePath = configuration["AudioStorage:Path"] ?? "wwwroot/audio";
@@ -33,6 +32,7 @@ public class ConversationService : IConversationService
         Directory.CreateDirectory(_audioStoragePath);
         _serviceProvider = serviceProvider;
     }
+
 
     public async Task<Conversation> CreateConversationWithAudioAsync(
     string? note,
@@ -185,10 +185,9 @@ public class ConversationService : IConversationService
 
     private async Task TranscribeOnlyAsync(Guid conversationId)
     {
-
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var whisperService = scope.ServiceProvider.GetRequiredService<IWhisperService>();
+        var transcriptionService = scope.ServiceProvider.GetRequiredService<ITranscriptionService>(); // ← Changed
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<ConversationService>>();
 
         try
@@ -199,25 +198,27 @@ public class ConversationService : IConversationService
                 return;
             }
 
-            // Convert to WAV
+            // Convert to WAV (AssemblyAI supports many formats, but WAV is reliable)
             conversation.ProcessingStatus = "Converting";
             await context.SaveChangesAsync();
 
             var wavPath = await ConvertToWavAsync(conversation.AudioFilePath!, default);
 
-            // Transcribe
+            // Transcribe with AssemblyAI
             conversation.ProcessingStatus = "Transcribing";
             await context.SaveChangesAsync();
 
-            var transcription = await whisperService.TranscribeAsync(wavPath);
+            var transcription = await transcriptionService.TranscribeAsync(wavPath);
 
             conversation.TranscriptionText = transcription.Text;
             conversation.TranscriptionLanguage = transcription.Language;
             conversation.ProcessingStatus = "Transcribed";
             await context.SaveChangesAsync();
 
-
-            logger.LogInformation("Transcription completed for conversation {ConversationId}", conversationId);
+            logger.LogInformation(
+                "Transcription completed for conversation {ConversationId}. Confidence: {Confidence}",
+                conversationId,
+                transcription.Confidence);
         }
         catch (Exception ex)
         {

@@ -52,9 +52,7 @@ builder.Services.AddServerSideBlazor()
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 
-// Whisper service with HttpClient for model download
-builder.Services.AddHttpClient<IWhisperService, WhisperService>();
-builder.Services.AddSingleton<IWhisperService, WhisperService>();
+builder.Services.AddScoped<ITranscriptionService, AssemblyAITranscriptionService>();
 
 // Extraction service (Ollama) with HttpClient
 builder.Services.AddHttpClient<IExtractionService, ExtractionService>(client =>
