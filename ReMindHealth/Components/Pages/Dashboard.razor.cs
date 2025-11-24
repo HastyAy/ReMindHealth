@@ -1,31 +1,67 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using ReMindHealth.Data;
+using ReMindHealth.Services.Interfaces;
 
 namespace ReMindHealth.Components.Pages
 {
     public partial class Dashboard
     {
         private string greeting = "";
+        private bool isLoading = true;
 
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            // Deutsche Zeitzone erzwingen
-            var berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
-            DateTime berlinTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, berlinTimeZone);
-            int hour = berlinTime.Hour;
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
 
-            if (hour >= 6 && hour < 12)
+            if (user.Identity?.IsAuthenticated == true)
             {
-                greeting = "Guten Morgen 👋";
+                var appUser = await UserManager.GetUserAsync(user);
+
+                if (appUser != null && !appUser.HasAcceptedPrivacy)
+                {
+                    // User hasn't accepted privacy, redirect there
+                    NavigationManager.NavigateTo("/privacy");
+                    return; // Stop execution
+                }
             }
-            else if (hour >= 12 && hour < 18)
+
+            await LoadDashboardAsync();
+        }
+
+        private async Task LoadDashboardAsync()
+        {
+            try
             {
-                greeting = "Guten Mittag ☀️";
+                // Set greeting
+                var berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+                DateTime berlinTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, berlinTimeZone);
+                int hour = berlinTime.Hour;
+
+                if (hour >= 6 && hour < 12)
+                {
+                    greeting = "Guten Morgen 👋";
+                }
+                else if (hour >= 12 && hour < 18)
+                {
+                    greeting = "Guten Mittag ☀️";
+                }
+                else
+                {
+                    greeting = "Guten Abend 🌙";
+                }
+
+                // Load your dashboard data here...
             }
-            else
+            finally
             {
-                greeting = "Guten Abend 🌙";
+                isLoading = false;
             }
         }
 
