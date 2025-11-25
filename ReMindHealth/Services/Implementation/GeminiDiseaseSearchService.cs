@@ -107,14 +107,14 @@ WICHTIG:
         {
             contents = new[]
             {
-                new
+            new
+            {
+                parts = new[]
                 {
-                    parts = new[]
-                    {
-                        new { text = prompt }
-                    }
+                    new { text = prompt }
                 }
-            },
+            }
+        },
             generationConfig = new
             {
                 temperature = 0.3,
@@ -127,23 +127,53 @@ WICHTIG:
         var json = JsonSerializer.Serialize(requestBody);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync(url, content, cancellationToken);
-        var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+        // ✅ Add retry logic with exponential backoff
+        int maxRetries = 3;
+        int retryDelay = 2000; // Start with 2 seconds
 
-        if (!response.IsSuccessStatusCode)
+        for (int i = 0; i < maxRetries; i++)
         {
-            throw new Exception($"Gemini API error: {response.StatusCode} - {responseText}");
+            try
+            {
+                _logger.LogInformation("Calling Gemini API (attempt {Attempt}/{MaxRetries})", i + 1, maxRetries);
+
+                var response = await _httpClient.PostAsync(url, content, cancellationToken);
+                var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var geminiResponse = JsonSerializer.Deserialize<GeminiApiResponse>(responseText);
+                    var generatedText = geminiResponse?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
+
+                    if (string.IsNullOrEmpty(generatedText))
+                    {
+                        throw new Exception("No text generated from Gemini API");
+                    }
+
+                    return generatedText;
+                }
+
+                // If service unavailable (503), retry
+                if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable && i < maxRetries - 1)
+                {
+                    _logger.LogWarning("Gemini API overloaded, retrying in {Delay}ms...", retryDelay);
+                    await Task.Delay(retryDelay, cancellationToken);
+                    retryDelay *= 2; // Exponential backoff: 2s, 4s, 8s
+                    continue;
+                }
+
+                // Other errors or last retry - throw exception
+                throw new Exception($"Gemini API error: {response.StatusCode} - {responseText}");
+            }
+            catch (Exception ex) when (i < maxRetries - 1)
+            {
+                _logger.LogWarning(ex, "Attempt {Attempt} failed, retrying...", i + 1);
+                await Task.Delay(retryDelay, cancellationToken);
+                retryDelay *= 2;
+            }
         }
 
-        var geminiResponse = JsonSerializer.Deserialize<GeminiApiResponse>(responseText);
-        var generatedText = geminiResponse?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
-
-        if (string.IsNullOrEmpty(generatedText))
-        {
-            throw new Exception("No text generated from Gemini API");
-        }
-
-        return generatedText;
+        throw new Exception("Gemini API failed after all retry attempts");
     }
 
     private DiseaseSearchResult ParseSearchResponse(string responseText, string diseaseName)
