@@ -1,32 +1,144 @@
 @page "/search"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using ReMindHealth.Components.Layout
-@layout AppLayout
-@inject IJSRuntime JS
+@using ReMindHealth.Services
+@using ReMindHealth.Services.Interfaces
+@inject IDiseaseSearchService DiseaseSearchService
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@layout AppLayout
+
 <div class="app-frame">
     <div class="search-container">
-        <!-- Zurück-Pfeil oben links -->
-        <button class="zurueck-wrapper" @onclick="Zurueck">
+        <button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")'>
             <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
         </button>
 
-        <!-- Überschrift + Lupe rechts daneben -->
-        <div class="title-row">
-            <h3>Krankheiten/Diagnosen durchsuchen</h3>
-            <img src="images/lupe.png" alt="Lupe" class="lupe-icon" />
+        <h2 class="page-title">🔍 Krankheiten suchen</h2>
+
+        <div class="search-box">
+            <input type="text"
+                   @bind="searchQuery"
+                   @bind:event="oninput"
+                   @onkeypress="HandleKeyPress"
+                   placeholder="z.B. Grippe, Diabetes, Migräne..."
+                   class="search-input" />
+            <button @onclick="PerformSearch" class="search-button" disabled="@isSearching">
+                @if (isSearching)
+                {
+                    <span>Suche...</span>
+                }
+                else
+                {
+                    <span>🔍 Suchen</span>
+                }
+            </button>
         </div>
 
-        <p class="text">
-            Suchen Sie nach einer Krankheit, um eine einfache Erklärung zu erhalten.
-        </p>
+        @if (isSearching)
+        {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Suche nach Informationen...</p>
+            </div>
+        }
+        else if (searchResult != null)
+        {
+            <div class="result-container">
+                <div class="result-header">
+                    <h3>@searchResult.DiseaseName</h3>
+                </div>
 
-        <input class="krankheit-input" type="text" placeholder="Geben Sie den Namen einer Krankheit ein" />
+                <div class="result-section">
+                    <h4>📋 Beschreibung</h4>
+                    <p>@searchResult.Description</p>
+                </div>
+
+                @if (searchResult.Symptoms.Any())
+                {
+                    <div class="result-section">
+                        <h4>🩺 Symptome</h4>
+                        <ul>
+                            @foreach (var symptom in searchResult.Symptoms)
+                            {
+                                <li>@symptom</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (searchResult.Causes.Any())
+                {
+                    <div class="result-section">
+                        <h4>🔬 Ursachen</h4>
+                        <ul>
+                            @foreach (var cause in searchResult.Causes)
+                            {
+                                <li>@cause</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (searchResult.Treatments.Any())
+                {
+                    <div class="result-section">
+                        <h4>💊 Behandlung</h4>
+                        <ul>
+                            @foreach (var treatment in searchResult.Treatments)
+                            {
+                                <li>@treatment</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (searchResult.Prevention.Any())
+                {
+                    <div class="result-section">
+                        <h4>🛡️ Vorbeugung</h4>
+                        <ul>
+                            @foreach (var prevention in searchResult.Prevention)
+                            {
+                                <li>@prevention</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (searchResult.WhenToSeeDoctor.Any())
+                {
+                    <div class="result-section important">
+                        <h4>⚠️ Wann zum Arzt</h4>
+                        <ul>
+                            @foreach (var when in searchResult.WhenToSeeDoctor)
+                            {
+                                <li>@when</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(searchResult.AdditionalInfo))
+                {
+                    <div class="result-section">
+                        <h4>ℹ️ Zusätzliche Informationen</h4>
+                        <p>@searchResult.AdditionalInfo</p>
+                    </div>
+                }
+
+                <div class="disclaimer">
+                    <strong>⚕️ Wichtiger Hinweis:</strong> Diese Informationen dienen nur zur allgemeinen Information und ersetzen keine medizinische Beratung. Bitte konsultieren Sie immer einen Arzt bei gesundheitlichen Beschwerden.
+                </div>
+            </div>
+        }
+        else if (hasSearched)
+        {
+            <div class="no-results">
+                <p>Keine Ergebnisse gefunden. Bitte versuchen Sie eine andere Suche.</p>
+            </div>
+        }
     </div>
 </div>
 
-@code {
-    void Zurueck()
-    {
-        NavigationManager.NavigateTo("/dashboard");
-    }
-}

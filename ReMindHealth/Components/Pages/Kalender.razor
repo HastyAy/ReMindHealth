@@ -1,17 +1,34 @@
 @page "/kalender"
-@using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using ReMindHealth.Components.Layout
+@rendermode InteractiveServer
+@layout AppLayout
 
 <div class="app-frame">
     <div class="home-container">
-        <h2 class="greeting">
-            <i class="bi bi-calendar3"></i> Termine
-        </h2>
+        <div class="header-with-back">
+            <button class="zurueck-wrapper" @onclick='() => NavigateTo("/dashboard")'>
+                <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+            </button>
+            <h2 class="greeting">
+                <i class="bi bi-calendar3"></i> Termine
+            </h2>
+        </div>
 
-        @if (termine == null || !termine.Any())
+        @if (isLoading)
+        {
+            <div class="loading-state">
+                <p>Lade Termine...</p>
+            </div>
+        }
+        else if (termine == null || !termine.Any())
         {
             <div class="no-appointments">
-                Es wurden noch keine Termine eingetragen
+                <p>Es wurden noch keine Termine eingetragen</p>
+                <button class="primary-button" @onclick='() => NavigateTo("/record")'>
+                    Termin aufnehmen
+                </button>
             </div>
         }
         else
@@ -19,9 +36,14 @@
             <div class="termin-list">
                 @foreach (var termin in termine)
                 {
-                    <div class="termin-item @(selectedTermin?.Id == termin.Id ? "active" : "")"
+                    <div class="termin-item @(selectedTermin?.AppointmentId == termin.AppointmentId ? "active" : "")"
                          @onclick="() => SelectTermin(termin)">
-                        @termin.Datum.ToString("dddd dd. MMM", new System.Globalization.CultureInfo("de-DE"))
+                        <div class="termin-date">
+                            @termin.AppointmentDateTime.ToLocalTime().ToString("dddd dd. MMM", new System.Globalization.CultureInfo("de-DE"))
+                        </div>
+                        <div class="termin-time">
+                            @termin.AppointmentDateTime.ToLocalTime().ToString("HH:mm")
+                        </div>
                     </div>
                 }
             </div>
@@ -29,33 +51,53 @@
             @if (selectedTermin != null)
             {
                 <div class="termin-detail">
-                    @if (string.IsNullOrWhiteSpace(selectedTermin.Titel))
+                    @if (string.IsNullOrWhiteSpace(selectedTermin.Title))
                     {
                         <div class="no-info">
                             <i class="bi bi-plus-square-fill"></i>
                             <p>Es wurden noch keine Informationen zu dem Termin eingetragen</p>
-                            <p class="hint">(Auf <b>„Termin bearbeiten“</b> klicken, um Informationen einzutragen)</p>
                         </div>
                     }
                     else
                     {
                         <div class="termin-info">
-                            <i class="bi bi-plus-square-fill"></i>
-                            <h4>@selectedTermin.Titel</h4>
-                            <p class="termin-zeit">@selectedTermin.Uhrzeit</p>
-                            <p class="termin-adresse">@selectedTermin.Adresse</p>
+                            <i class="bi bi-calendar-check-fill"></i>
+                            <h4>@selectedTermin.Title</h4>
+                            <p class="termin-zeit">
+                                <i class="bi bi-clock"></i>
+                                @selectedTermin.AppointmentDateTime.ToLocalTime().ToString("HH:mm")
+                            </p>
+                            @if (!string.IsNullOrEmpty(selectedTermin.Location))
+                            {
+                                <p class="termin-adresse">
+                                    <i class="bi bi-geo-alt"></i>
+                                    @selectedTermin.Location
+                                </p>
+                            }
+                            @if (!string.IsNullOrEmpty(selectedTermin.Description))
+                            {
+                                <p class="termin-beschreibung">
+                                    @selectedTermin.Description
+                                </p>
+                            }
+                            @if (!string.IsNullOrEmpty(selectedTermin.AttendeeNames))
+                            {
+                                <p class="termin-teilnehmer">
+                                    <i class="bi bi-people"></i>
+                                    @selectedTermin.AttendeeNames
+                                </p>
+                            }
+                            @if (selectedTermin.DurationMinutes.HasValue)
+                            {
+                                <p class="termin-dauer">
+                                    <i class="bi bi-hourglass"></i>
+                                    @selectedTermin.DurationMinutes Minuten
+                                </p>
+                            }
                         </div>
                     }
-
-                    <button class="edit-btn" @onclick='() => NavigateTo($"/termin-bearbeiten/{selectedTermin.Id}")'>
-                        Termin bearbeiten
-                    </button>
                 </div>
             }
         }
-
-        <button class="next-btn" @onclick='() => NavigateTo("/termin-erstellen")'>
-            Termin manuell hinzufügen
-        </button>
     </div>
 </div>

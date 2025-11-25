@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
+using ReMindHealth.Data;
+using ReMindHealth.Models;
+using ReMindHealth.Services.Interfaces;
 using System.Globalization;
 
 namespace ReMindHealth.Components.Pages
@@ -6,17 +10,43 @@ namespace ReMindHealth.Components.Pages
     public partial class Kalender
     {
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] private ApplicationDbContext Context { get; set; } = default!;
+        [Inject] private ICurrentUserService CurrentUserService { get; set; } = default!;
 
-        private List<Termin> termine = new()
+        private bool isLoading = true;
+        private List<ExtractedAppointment> termine = new();
+        private ExtractedAppointment? selectedTermin;
+
+        protected override async Task OnInitializedAsync()
         {
-            new Termin { Id = 1, Titel = "Dr. Schmidt", Datum = new DateTime(2025, 10, 20), Uhrzeit = "14:30", Adresse = "Blumenstraße 3, 92120 Nürnberg" },
-            new Termin { Id = 2, Titel = "", Datum = new DateTime(2025, 10, 23), Uhrzeit = "09:00", Adresse = "" },
-            new Termin { Id = 3, Titel = "Laboruntersuchung", Datum = new DateTime(2025, 12, 03), Uhrzeit = "08:15", Adresse = "Krankenhausstraße 7, 97070 Würzburg" }
-        };
+            await LoadAppointments();
+        }
 
-        private Termin? selectedTermin;
+        private async Task LoadAppointments()
+        {
+            try
+            {
+                isLoading = true;
+                var userId = await CurrentUserService.GetUserIdAsync();
 
-        private void SelectTermin(Termin termin)
+                // Load all appointments for this user, ordered by date
+                termine = await Context.ExtractedAppointments
+                    .Include(a => a.Conversation)
+                    .Where(a => a.Conversation.UserId == userId && !a.Conversation.IsDeleted)
+                    .OrderBy(a => a.AppointmentDateTime)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading appointments: {ex.Message}");
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
+        private void SelectTermin(ExtractedAppointment termin)
         {
             selectedTermin = termin;
         }
@@ -25,15 +55,5 @@ namespace ReMindHealth.Components.Pages
         {
             NavigationManager.NavigateTo(url);
         }
-
-        public class Termin
-        {
-            public int Id { get; set; }
-            public string Titel { get; set; } = "";
-            public DateTime Datum { get; set; }
-            public string Uhrzeit { get; set; } = "";
-            public string Adresse { get; set; } = "";
-        }
     }
 }
-
