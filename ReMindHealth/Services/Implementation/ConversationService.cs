@@ -35,24 +35,19 @@ public class ConversationService : IConversationService
 
 
     public async Task<Conversation> CreateConversationWithAudioAsync(
-    string? note,
-    byte[] audioData,
-    CancellationToken cancellationToken = default)
+      string? note,
+      byte[] audioData,
+      CancellationToken cancellationToken = default)
     {
         var userId = await _currentUserService.GetUserIdAsync();
-
         var conversationId = Guid.NewGuid();
-        var fileName = $"{conversationId}.webm";
-        var filePath = Path.Combine(_audioStoragePath, fileName);
-
-        await File.WriteAllBytesAsync(filePath, audioData, cancellationToken);
 
         var conversation = new Conversation
         {
             ConversationId = conversationId,
             UserId = userId,
             Title = note ?? $"Gespräch vom {DateTime.Now:dd.MM.yyyy HH:mm}",
-            AudioFilePath = filePath,
+            AudioFilePath = null, //  No file saved!
             AudioFormat = "webm",
             AudioDurationSeconds = EstimateAudioDuration(audioData),
             RecordedAt = DateTime.UtcNow,
@@ -64,12 +59,12 @@ public class ConversationService : IConversationService
         _context.Conversations.Add(conversation);
         await _context.SaveChangesAsync(cancellationToken);
 
-
-        await Task.Run(async () =>
+        // Pass audio data directly to transcription
+        _ = Task.Run(async () =>
         {
             try
             {
-                await TranscribeOnlyAsync(conversationId);
+                await TranscribeFromMemoryAsync(conversationId, audioData);
             }
             catch (Exception ex)
             {
@@ -78,9 +73,55 @@ public class ConversationService : IConversationService
             }
         });
 
-
-
         return conversation;
+    }
+
+    private async Task TranscribeFromMemoryAsync(Guid conversationId, byte[] audioData)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var transcriptionService = scope.ServiceProvider.GetRequiredService<ITranscriptionService>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<ConversationService>>();
+
+        try
+        {
+            var conversation = await context.Conversations.FindAsync(conversationId);
+            if (conversation == null)
+            {
+                return;
+            }
+
+            conversation.ProcessingStatus = "Transcribing";
+            await context.SaveChangesAsync();
+
+            //  Transcribe directly from memory - no file needed!
+            using var memoryStream = new MemoryStream(audioData);
+            var transcription = await transcriptionService.TranscribeFromStreamAsync(memoryStream);
+
+            conversation.TranscriptionText = transcription.Text;
+            conversation.TranscriptionLanguage = transcription.Language;
+            conversation.ProcessingStatus = "Transcribed";
+            await context.SaveChangesAsync();
+
+            logger.LogInformation(
+                "Transcription completed for conversation {ConversationId}. Confidence: {Confidence}",
+                conversationId,
+                transcription.Confidence);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[TranscribeFromMemoryAsync] ERROR: {ex.Message}");
+            Console.WriteLine($"[TranscribeFromMemoryAsync] Stack: {ex.StackTrace}");
+            logger.LogError(ex, "Error transcribing conversation {ConversationId}", conversationId);
+
+            var conversation = await context.Conversations.FindAsync(conversationId);
+            if (conversation != null)
+            {
+                conversation.ProcessingStatus = "Failed";
+                conversation.ProcessingError = ex.Message;
+                await context.SaveChangesAsync();
+            }
+        }
     }
     public async Task ContinueProcessingFromTranscriptionAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {

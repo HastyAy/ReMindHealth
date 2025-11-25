@@ -64,12 +64,14 @@ builder.Services.AddServerSideBlazor()
     });
 
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<NotificationService>();
 
 // User and business services
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<ITranscriptionService, AssemblyAITranscriptionService>();
 builder.Services.AddScoped<IExtractionService, GeminiExtractionService>();
+builder.Services.AddScoped<IDiseaseSearchService, GeminiDiseaseSearchService>();
 
 var app = builder.Build();
 
