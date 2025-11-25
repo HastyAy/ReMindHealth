@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ReMindHealth.Data;
+using ReMindHealth.Models;
 using ReMindHealth.Services.Interfaces;
 
 namespace ReMindHealth.Components.Pages
@@ -10,10 +11,12 @@ namespace ReMindHealth.Components.Pages
     {
         private string greeting = "";
         private bool isLoading = true;
+        private List<Conversation> recentConversations = new();
 
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
         [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+        [Inject] private IConversationService ConversationService { get; set; } = default!;
 
         protected override async Task OnInitializedAsync()
         {
@@ -27,7 +30,7 @@ namespace ReMindHealth.Components.Pages
                 if (appUser != null && !appUser.HasAcceptedPrivacy)
                 {
                     NavigationManager.NavigateTo("/privacy");
-                    return; 
+                    return;
                 }
             }
 
@@ -55,8 +58,16 @@ namespace ReMindHealth.Components.Pages
                 {
                     greeting = "Guten Abend 🌙";
                 }
-
-                // Load your dashboard data here...
+        
+                var allConversations = await ConversationService.GetRecentConversationsAsync(10);
+                recentConversations = allConversations
+                    .Where(c => c.ProcessingStatus == "Completed" && !string.IsNullOrEmpty(c.Summary))
+                    .Take(5)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading dashboard: {ex.Message}");
             }
             finally
             {

@@ -2,7 +2,7 @@
 @using ReMindHealth.Components.Layout
 @layout AppLayout
 @inject IJSRuntime JS
-
+@inject NavigationManager NavigationManager
 <div class="app-frame">
     <div class="search-container">
         <!-- Zurück-Pfeil oben links -->
@@ -25,8 +25,8 @@
 </div>
 
 @code {
-    async Task Zurueck()
+    void Zurueck()
     {
-        await JS.InvokeVoidAsync("window.location.assign", "/Intro5-1");
+        NavigationManager.NavigateTo("/dashboard");
     }
 }
