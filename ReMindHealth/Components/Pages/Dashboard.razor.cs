@@ -26,9 +26,8 @@ namespace ReMindHealth.Components.Pages
 
                 if (appUser != null && !appUser.HasAcceptedPrivacy)
                 {
-                    // User hasn't accepted privacy, redirect there
                     NavigationManager.NavigateTo("/privacy");
-                    return; // Stop execution
+                    return; 
                 }
             }
 

@@ -217,7 +217,7 @@ Antworte NUR mit folgendem JSON-Format (keine zusätzlichen Texte!):
                     AppointmentId = Guid.NewGuid(),
                     Title = a.Title ?? "Unbenannter Termin",
                     Description = a.Description,
-                    AppointmentDateTime = a.AppointmentDateTime,
+                    AppointmentDateTime = DateTime.SpecifyKind(a.AppointmentDateTime, DateTimeKind.Local).ToUniversalTime(),
                     Location = a.Location,
                     CreatedAt = DateTime.UtcNow
                 }).ToList(),
@@ -226,7 +226,7 @@ Antworte NUR mit folgendem JSON-Format (keine zusätzlichen Texte!):
                     TaskId = Guid.NewGuid(),
                     Title = t.Title ?? "Unbenannte Aufgabe",
                     Description = t.Description,
-                    DueDate = t.DueDate,
+                    DueDate = t.DueDate?.ToUniversalTime(),
                     Priority = t.Priority ?? "Medium",
                     IsCompleted = false,
                     CreatedAt = DateTime.UtcNow,

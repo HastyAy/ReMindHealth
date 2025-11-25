@@ -1,31 +1,84 @@
 @page "/record"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using ReMindHealth.Components.Layout
-@layout AppLayout
+@using ReMindHealth.Models
+@using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@layout AppLayout
 
-<div class="app-frame">
-    <div class="record-container">
-        <!-- Zurück-Pfeil oben links -->
-        <button class="zurueck-wrapper" @onclick="Zurueck">
-            <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
-        </button>
 
-        <img src="images/Mikrofon.png" alt="Mikrofon Bild" class="mikrofon-logo" />
-        <h3>Gespräch einfach aufnehmen</h3>
-        <p class="text">
-            Tippen Sie auf "Aufnahme starten", um Ihr Arztgespräch aufzuzeichnen.
-        </p>
-        <button type="button" class="aufnehmen" @onclick="Weiter">Aufnahme starten</button>
-    </div>
-</div>
+<PageTitle>Memory Builder - Neue Aufnahme</PageTitle>
 
-@code {
-    void Weiter()  => NavigationManager.NavigateTo("Home");
-    void Zurueck()
-    {   
-    Console.WriteLine("Zurück gedrückt!");
-    NavigationManager.NavigateTo("/Home");
-    }
-}
+<button class="zurueck-wrapper" @onclick="Zurueck">
+    <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+</button>
+<RadzenRow Gap="1.5rem" class="main-content">
+    <RadzenColumn Size="12" SizeLG="8">
+        <RadzenCard class="recording-card">
+            <div class="card-header">
+                <h2>Neue Aufnahme</h2>
+                <div class="status-indicator">
+                    <span class="status-dot @(isRecording ? "recording" : "ready")"></span>
+                    <span class="status-text">@(isRecording ? "Aufnahme läuft" : "Bereit")</span>
+                </div>
+            </div>
+            <div class="recording-controls">
+                <RadzenButton ButtonStyle="@(isRecording? ButtonStyle.Danger: ButtonStyle.Primary)"
+                              Size="ButtonSize.Large"
+                              Click="@ToggleRecording"
+                              Icon="@(isRecording ? "stop" : "mic")"
+                              Text="@(isRecording ? "Aufnahme stoppen" : "Aufnahme starten")"
+                              class="recording-button" />
+
+                <div class="recording-info">
+                    <div class="info-item">
+                        <div class="info-value">@recordingDuration</div>
+                        <div class="info-label">Dauer</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">@audioLevel</div>
+                        <div class="info-label">Pegel</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-value">DE</div>
+                        <div class="info-label">Sprache</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-section">
+                @if (showTranscriptionReview)
+                {
+                    <RadzenLabel Text="Transkribierter Text (bearbeitbar)" />
+                    <p>showTranscriptionReview: @showTranscriptionReview</p>
+                    <p>transcriptionText length: @transcriptionText.Length</p>
+                    <RadzenTextArea @bind-Value="transcriptionText"
+                                    Rows="8"
+                                    Style="width: 100%; font-family: monospace;"
+                                    Placeholder="Transkription wird geladen..." />
+
+                    <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+                        <RadzenButton Text="Verarbeitung starten"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Icon="check"
+                                      Click="@StartProcessing" />
+                        <RadzenButton Text="Abbrechen"
+                                      ButtonStyle="ButtonStyle.Light"
+                                      Icon="close"
+                                      Click="@CancelProcessing" />
+                    </div>
+                }
+            </div>
+        </RadzenCard>
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+
+
 
 

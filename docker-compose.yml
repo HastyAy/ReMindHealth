@@ -46,8 +46,6 @@ services:
       - AudioStorage__Path=/app/wwwroot/audio
     ports:
       - "5000:8080"
-    volumes:
-      - audio_data:/app/wwwroot/audio
     depends_on:
       postgres:
         condition: service_healthy

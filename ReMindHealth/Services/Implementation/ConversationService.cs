@@ -187,7 +187,7 @@ public class ConversationService : IConversationService
     {
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var transcriptionService = scope.ServiceProvider.GetRequiredService<ITranscriptionService>(); // ← Changed
+        var transcriptionService = scope.ServiceProvider.GetRequiredService<ITranscriptionService>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<ConversationService>>();
 
         try
@@ -198,17 +198,12 @@ public class ConversationService : IConversationService
                 return;
             }
 
-            // Convert to WAV (AssemblyAI supports many formats, but WAV is reliable)
-            conversation.ProcessingStatus = "Converting";
-            await context.SaveChangesAsync();
-
-            var wavPath = await ConvertToWavAsync(conversation.AudioFilePath!, default);
-
-            // Transcribe with AssemblyAI
             conversation.ProcessingStatus = "Transcribing";
             await context.SaveChangesAsync();
 
-            var transcription = await transcriptionService.TranscribeAsync(wavPath);
+            // Option 1: Use Stream directly (most efficient - no extra memory allocation)
+            using var fileStream = new FileStream(conversation.AudioFilePath!, FileMode.Open, FileAccess.Read);
+            var transcription = await transcriptionService.TranscribeFromStreamAsync(fileStream);
 
             conversation.TranscriptionText = transcription.Text;
             conversation.TranscriptionLanguage = transcription.Language;
@@ -318,32 +313,6 @@ public class ConversationService : IConversationService
     }
 
 
-    private async Task<string> ConvertToWavAsync(string webmPath, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var wavPath = Path.ChangeExtension(webmPath, ".wav");
-
-            _logger.LogInformation("Converting {WebmPath} to WAV format", webmPath);
-
-            await FFMpegArguments
-                .FromFileInput(webmPath)
-                .OutputToFile(wavPath, overwrite: true, options => options
-                    .WithAudioCodec("pcm_s16le")
-                    .WithAudioSamplingRate(16000)
-                    .ForceFormat("wav"))
-                .ProcessAsynchronously();
-
-            _logger.LogInformation("Conversion completed: {WavPath}", wavPath);
-
-            return wavPath;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error converting audio file");
-            throw new Exception($"FFmpeg conversion failed: {ex.Message}. Make sure FFmpeg is installed.", ex);
-        }
-    }
     private int EstimateAudioDuration(byte[] audioData)
     {
         // Rough estimation: 1 second of WebM audio ≈ 16KB
