@@ -1,31 +1,76 @@
 @page "/record"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
 @using ReMindHealth.Components.Layout
-@layout AppLayout
+@using ReMindHealth.Services.Interfaces
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@layout AppLayout
 
 <div class="app-frame">
-    <div class="record-container">
-        <!-- Zurück-Pfeil oben links -->
-        <button class="zurueck-wrapper" @onclick="Zurueck">
-            <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
-        </button>
+    <button class="zurueck-wrapper" @onclick="Zurueck">
+        <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+    </button>
 
-        <img src="images/Mikrofon.png" alt="Mikrofon Bild" class="mikrofon-logo" />
-        <h3>Gespräch einfach aufnehmen</h3>
-        <p class="text">
-            Tippen Sie auf "Aufnahme starten", um Ihr Arztgespräch aufzuzeichnen.
-        </p>
-        <button type="button" class="aufnehmen" @onclick="Weiter">Aufnahme starten</button>
+    <div class="record-container">
+        <div class="card-header">
+            <h2>Neue Aufnahme</h2>
+            <div class="status-indicator">
+                <span class="status-dot @(isRecording ? "recording" : "ready")"></span>
+                <span class="status-text">@(isRecording ? "Aufnahme läuft" : "Bereit")</span>
+            </div>
+        </div>
+
+        <div class="recording-controls">
+            <button class="recording-button @(isRecording ? "recording" : "ready")"
+                    @onclick="ToggleRecording">
+                <i class="icon @(isRecording ? "stop" : "mic")"></i>
+                <span>@(isRecording ? "Stoppen" : "Aufnehmen")</span>
+            </button>
+
+            <div class="recording-info">
+                <div class="info-item">
+                    <div class="info-value">@recordingDuration</div>
+                    <div class="info-label">Dauer</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-value">@audioLevel</div>
+                    <div class="info-label">Pegel</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-value">DE</div>
+                    <div class="info-label">Sprache</div>
+                </div>
+            </div>
+        </div>
+
+        @if (showTranscriptionReview)
+        {
+            <div class="transcription-review">
+                <label>Transkribierter Text (bearbeitbar)</label>
+                <textarea @bind="transcriptionText"
+                          placeholder="Transkription wird geladen..."
+                          rows="8"></textarea>
+
+                <div class="action-buttons">
+                    <button class="btn btn-success" @onclick="StartProcessing">
+                        <i class="icon-check"></i>
+                        Verarbeitung starten
+                    </button>
+                    <button class="btn btn-cancel" @onclick="CancelProcessing">
+                        <i class="icon-close"></i>
+                        Abbrechen
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="note-section">
+            <label>Notiz hinzufügen (optional)</label>
+            <input type="text"
+                   @bind="noteText"
+                   placeholder="z.B. Arzttermin, Rezept abholen..."
+                   class="note-input" />
+        </div>
     </div>
 </div>
-
-@code {
-    void Weiter()  => NavigationManager.NavigateTo("Home");
-    void Zurueck()
-    {   
-    Console.WriteLine("Zurück gedrückt!");
-    NavigationManager.NavigateTo("/Home");
-    }
-}
-
-

@@ -4,7 +4,7 @@ namespace ReMindHealth.Services
 {
     public class ExtractionResult
     {
-        public string Summary { get; set; } = string.Empty;
+        public string? Summary { get; set; }
         public string? CorrectedTranscription { get; set; }
         public List<ExtractedAppointment> Appointments { get; set; } = new();
         public List<ExtractedTask> Tasks { get; set; } = new();

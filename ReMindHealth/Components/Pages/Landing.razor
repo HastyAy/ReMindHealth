@@ -1,5 +1,4 @@
 @page "/Landing"
-@attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
 @using ReMindHealth.Components.Layout
@@ -17,7 +16,7 @@
         <p class="small-text">Sicher und datenschutzkonform.</p>
 
         
-<button class="next-btn" @onclick="@(() => NavigateTo("/privacy"))">
+<button class="next-btn" @onclick="@(() => NavigateTo("/newUser"))">
     Los geht’s
 </button>
 

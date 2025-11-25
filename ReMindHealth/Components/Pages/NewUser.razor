@@ -1,0 +1,49 @@
+﻿@page "/newUser"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Willkommen - ReMind Health</PageTitle>
+
+<div class="new-user-container">
+    <div class="new-user-card">
+        <h1>ReMind Health</h1>
+        <p class="subtitle">Ihre persönliche Gesundheitsassistenz</p>
+
+        <div class="divider"></div>
+
+        <h2>Willkommen! 👋</h2>
+        <p class="description">Wählen Sie eine Option, um fortzufahren:</p>
+
+        <div class="button-group">
+            <a href="/Account/Register" class="btn-primary">
+                Neues Konto erstellen
+            </a>
+
+            <a href="/Account/Login" class="btn-secondary">
+                Anmelden
+            </a>
+        </div>
+
+        <p class="footer-text">
+            <small>Kostenlos • Sicher • Privat</small>
+        </p>
+    </div>
+</div>
+@code {
+    private bool hasCheckedAuth = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !hasCheckedAuth)
+        {
+            hasCheckedAuth = true;
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            if (authState.User.Identity?.IsAuthenticated == true)
+            {
+                NavigationManager.NavigateTo("/dashboard");
+            }
+        }
+    }
+}

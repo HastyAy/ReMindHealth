@@ -1,0 +1,212 @@
+﻿@page "/summaries"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using ReMindHealth.Components.Layout
+@using ReMindHealth.Models
+@using ReMindHealth.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject IConversationService ConversationService
+@rendermode InteractiveServer
+@layout AppLayout
+
+<div class="app-frame">
+    <div class="home-container">
+        <div class="header-with-back">
+            <button class="zurueck-wrapper" @onclick="Zurueck">
+                <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+            </button>
+            <h2 class="greeting">Zusammenfassungen</h2>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="loading-state">
+                <p>Lade Zusammenfassungen...</p>
+            </div>
+        }
+        else if (!conversations.Any())
+        {
+            <div class="no-summaries">
+                <p>Noch keine Zusammenfassungen vorhanden.</p>
+                <p>Erstellen Sie Ihre erste Aufnahme!</p>
+                <button class="primary-button" @onclick="@(() => NavigationManager.NavigateTo("/record"))">
+                    Jetzt aufnehmen
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="summary-list">
+                @foreach (var conversation in conversations)
+                {
+                    <div class="conversation-card @(selectedConversation?.ConversationId == conversation.ConversationId ? "selected" : "")"
+                         @onclick="@(() => SelectConversation(conversation))">
+                        <div class="conversation-header">
+                            <div class="conversation-icon">
+                                <img src="images/brain.png" alt="Icon" />
+                            </div>
+                            <div class="conversation-info">
+                                <h4 class="conversation-title">@conversation.Title</h4>
+                                <p class="conversation-date">@conversation.RecordedAt.ToLocalTime().ToString("dd. MMM yyyy, HH:mm")</p>
+                            </div>
+                            <span class="status-badge @conversation.ProcessingStatus.ToLower()">
+                                @GetStatusText(conversation.ProcessingStatus)
+                            </span>
+                        </div>
+
+                        @if (selectedConversation?.ConversationId == conversation.ConversationId)
+                        {
+                            <div class="conversation-details">
+                                @if (!string.IsNullOrEmpty(conversation.Summary))
+                                {
+                                    <div class="detail-section">
+                                        <h5>Zusammenfassung</h5>
+                                        <p>@conversation.Summary</p>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(conversation.TranscriptionText))
+                                {
+                                    <div class="detail-section">
+                                        <h5>Transkription</h5>
+                                        <p class="transcription-text">@conversation.TranscriptionText</p>
+                                    </div>
+                                }
+
+                                @if (conversationDetails != null)
+                                {
+                                    @if (conversationDetails.ExtractedAppointments.Any())
+                                    {
+                                        <div class="detail-section">
+                                            <h5>Termine (@conversationDetails.ExtractedAppointments.Count)</h5>
+                                            @foreach (var appointment in conversationDetails.ExtractedAppointments)
+                                            {
+                                                <div class="extracted-item">
+                                                    <strong>@appointment.Title</strong>
+                                                    <p>@appointment.AppointmentDateTime.ToLocalTime().ToString("dd. MMM yyyy, HH:mm")</p>
+                                                    @if (!string.IsNullOrEmpty(appointment.Location))
+                                                    {
+                                                        <p>📍 @appointment.Location</p>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(appointment.Description))
+                                                    {
+                                                        <p>@appointment.Description</p>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (conversationDetails.ExtractedTasks.Any())
+                                    {
+                                        <div class="detail-section">
+                                            <h5>Aufgaben (@conversationDetails.ExtractedTasks.Count)</h5>
+                                            @foreach (var task in conversationDetails.ExtractedTasks)
+                                            {
+                                                <div class="extracted-item">
+                                                    <strong>@task.Title</strong>
+                                                    @if (task.DueDate.HasValue)
+                                                    {
+                                                        <p>Fällig: @task.DueDate.Value.ToLocalTime().ToString("dd. MMM yyyy")</p>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(task.Description))
+                                                    {
+                                                        <p>@task.Description</p>
+                                                    }
+                                                    <span class="priority-badge @task.Priority.ToLower()">@task.Priority</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (conversationDetails.ExtractedNotes.Any())
+                                    {
+                                        <div class="detail-section">
+                                            <h5>Notizen (@conversationDetails.ExtractedNotes.Count)</h5>
+                                            @foreach (var note in conversationDetails.ExtractedNotes)
+                                            {
+                                                <div class="extracted-item">
+                                                    @if (!string.IsNullOrEmpty(note.Title))
+                                                    {
+                                                        <strong>@note.Title</strong>
+                                                    }
+                                                    <p>@note.Content</p>
+                                                    <span class="note-type-badge">@note.NoteType</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool isLoading = true;
+    private List<Conversation> conversations = new();
+    private Conversation? selectedConversation;
+    private Conversation? conversationDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadConversations();
+    }
+
+    private async Task LoadConversations()
+    {
+        try
+        {
+            isLoading = true;
+            conversations = await ConversationService.GetUserConversationsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading conversations: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SelectConversation(Conversation conversation)
+    {
+        if (selectedConversation?.ConversationId == conversation.ConversationId)
+        {
+            // Toggle off if clicking same conversation
+            selectedConversation = null;
+            conversationDetails = null;
+        }
+        else
+        {
+            selectedConversation = conversation;
+            // Load full details with appointments, tasks, notes
+            conversationDetails = await ConversationService.GetConversationWithDetailsAsync(conversation.ConversationId);
+        }
+    }
+
+    private string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Ausstehend",
+            "Converting" => "Konvertiere...",
+            "Transcribing" => "Transkribiere...",
+            "Transcribed" => "Transkribiert",
+            "Analyzing" => "Analysiere...",
+            "Completed" => "Abgeschlossen",
+            "Failed" => "Fehler",
+            _ => status
+        };
+    }
+
+    private void Zurueck()
+    {
+        NavigationManager.NavigateTo("/dashboard");
+    }
+}

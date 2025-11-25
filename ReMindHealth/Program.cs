@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
@@ -7,6 +7,7 @@ using ReMindHealth.Components.Account;
 using ReMindHealth.Data;
 using ReMindHealth.Services.Implementations;
 using ReMindHealth.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,23 +20,37 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false; 
+    options.SignIn.RequireConfirmedEmail = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddSignInManager()
+.AddDefaultTokenProviders();
+
 
 // Add Radzen services
 builder.Services.AddRadzenComponents();
@@ -43,23 +58,20 @@ builder.Services.AddRadzenComponents();
 builder.Services.AddServerSideBlazor()
     .AddHubOptions(options =>
     {
-        options.MaximumReceiveMessageSize = 100 * 1024 * 1024; // 100MB instead of 10MB
+        options.MaximumReceiveMessageSize = 100 * 1024 * 1024; // 100MB
         options.ClientTimeoutInterval = TimeSpan.FromMinutes(5);
         options.HandshakeTimeout = TimeSpan.FromMinutes(2);
     });
 
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<NotificationService>();
+
 // User and business services
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
-
 builder.Services.AddScoped<ITranscriptionService, AssemblyAITranscriptionService>();
-
-// Extraction service (Ollama) with HttpClient
-builder.Services.AddHttpClient<IExtractionService, ExtractionService>(client =>
-{
-    client.Timeout = TimeSpan.FromMinutes(3);
-});
-builder.Services.AddScoped<IExtractionService, ExtractionService>();
+builder.Services.AddScoped<IExtractionService, GeminiExtractionService>();
+builder.Services.AddScoped<IDiseaseSearchService, GeminiDiseaseSearchService>();
 
 var app = builder.Build();
 
@@ -71,20 +83,18 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 
 
-app.UseAntiforgery();
 
+app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
 // Ensure database is created and all migrations are applied

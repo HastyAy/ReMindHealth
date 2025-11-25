@@ -1,11 +1,11 @@
-ï»¿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Radzen;
 using ReMindHealth.Services.Interfaces;
 
 namespace ReMindHealth.Components.Pages
 {
-    public partial class Home
+    public partial class Record
     {
         [Inject] private IJSRuntime JS { get; set; } = default!;
         [Inject] private NotificationService NotificationService { get; set; } = default!;
@@ -17,17 +17,12 @@ namespace ReMindHealth.Components.Pages
         private string recordingDuration = "00:00";
         private string audioLevel = "Leise";
         private string noteText = "";
-        private DotNetObjectReference<Home>? objRef;
+        private DotNetObjectReference<Record>? objRef;
 
         private bool showTranscriptionReview = false;
         private string transcriptionText = "";
         private Guid? pendingConversationId = null;
 
-
-        protected override async Task OnInitializedAsync()
-        {
-
-        }
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -148,7 +143,7 @@ namespace ReMindHealth.Components.Pages
 
                             NotificationService.Notify(NotificationSeverity.Success, "Transkription fertig",
 
-                                "Bitte Ã¼berprÃ¼fen Sie den Text vor der Verarbeitung"));
+                                "Bitte überprüfen Sie den Text vor der Verarbeitung"));
                         break;
 
                     }
@@ -213,7 +208,10 @@ namespace ReMindHealth.Components.Pages
             StateHasChanged();
             NotificationService.Notify(NotificationSeverity.Info, "Abgebrochen", "Verarbeitung wurde abgebrochen");
         }
-
+        void Zurueck()
+        {
+            NavigationManager.NavigateTo("/dashboard");
+        }
         public void Dispose()
 
         {
@@ -221,7 +219,5 @@ namespace ReMindHealth.Components.Pages
             objRef?.Dispose();
 
         }
-
     }
-
 }

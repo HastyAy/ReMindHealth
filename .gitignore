@@ -45,6 +45,36 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# User secrets and API keys
+.env
+.env.local
+.env.production
+.env.*.local
+appsettings.*.json
+!appsettings.json
+secrets/
+*.key
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Audio files
+wwwroot/audio/*.webm
+wwwroot/audio/*.wav
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+
 # NUnit
 *.VisualState.xml
 TestResult.xml

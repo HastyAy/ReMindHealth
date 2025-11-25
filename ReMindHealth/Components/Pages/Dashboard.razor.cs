@@ -1,31 +1,77 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using ReMindHealth.Data;
+using ReMindHealth.Models;
+using ReMindHealth.Services.Interfaces;
 
 namespace ReMindHealth.Components.Pages
 {
     public partial class Dashboard
     {
         private string greeting = "";
+        private bool isLoading = true;
+        private List<Conversation> recentConversations = new();
 
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        [Inject] private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+        [Inject] private IConversationService ConversationService { get; set; } = default!;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            // Deutsche Zeitzone erzwingen
-            var berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
-            DateTime berlinTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, berlinTimeZone);
-            int hour = berlinTime.Hour;
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
 
-            if (hour >= 6 && hour < 12)
+            if (user.Identity?.IsAuthenticated == true)
             {
-                greeting = "Guten Morgen 👋";
+                var appUser = await UserManager.GetUserAsync(user);
+
+                if (appUser != null && !appUser.HasAcceptedPrivacy)
+                {
+                    NavigationManager.NavigateTo("/privacy");
+                    return;
+                }
             }
-            else if (hour >= 12 && hour < 18)
+
+            await LoadDashboardAsync();
+        }
+
+        private async Task LoadDashboardAsync()
+        {
+            try
             {
-                greeting = "Guten Mittag ☀️";
+                // Set greeting
+                var berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+                DateTime berlinTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, berlinTimeZone);
+                int hour = berlinTime.Hour;
+
+                if (hour >= 6 && hour < 12)
+                {
+                    greeting = "Guten Morgen 👋";
+                }
+                else if (hour >= 12 && hour < 18)
+                {
+                    greeting = "Guten Mittag ☀️";
+                }
+                else
+                {
+                    greeting = "Guten Abend 🌙";
+                }
+        
+                var allConversations = await ConversationService.GetRecentConversationsAsync(10);
+                recentConversations = allConversations
+                    .Where(c => c.ProcessingStatus == "Completed" && !string.IsNullOrEmpty(c.Summary))
+                    .Take(5)
+                    .ToList();
             }
-            else
+            catch (Exception ex)
             {
-                greeting = "Guten Abend 🌙";
+                Console.WriteLine($"Error loading dashboard: {ex.Message}");
+            }
+            finally
+            {
+                isLoading = false;
             }
         }
 

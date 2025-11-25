@@ -1,87 +1,395 @@
+/* Record Page Styles */
+
 .app-frame {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
-    padding: 1rem;
+    position: relative;
 }
 
-/* Container */
+/* Back Button */
+.zurueck-wrapper {
+    position: fixed;
+    top: 1.5rem;
+    left: 1.5rem;
+    background: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+    .zurueck-wrapper:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+.zurueck-button {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+/* Recording Container */
 .record-container {
-    position: relative;
-    background: #fff;
-    border-radius: 2rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background: white;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
     width: 100%;
-    max-width: 430px;
-    height: 90vh;
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+/* Status Indicator */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    background: #f8f9fa;
+    border-radius: 25px;
+}
+
+.status-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+    .status-dot.ready {
+        background: #28a745;
+        animation: pulse-ready 2s ease-in-out infinite;
+    }
+
+    .status-dot.recording {
+        background: #dc3545;
+        animation: pulse-recording 1s ease-in-out infinite;
+    }
+
+@keyframes pulse-ready {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes pulse-recording {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
+    }
+}
+
+.status-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Recording Controls */
+.recording-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    margin: 2rem 0;
+}
+
+/* Recording Button */
+.recording-button {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 2rem 1.5rem;
-    font-family: "Segoe UI", system-ui, sans-serif;
-}
-
-/* Zurück-Button (Bild in Button) */
-.zurueck-wrapper {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    z-index: 10;
-}
-.zurueck-button {
-    width: 36px;
-    height: 36px;
-    transition: transform 0.2s ease-in-out;
-}
-.zurueck-wrapper:hover .zurueck-button {
-    transform: scale(1.1);
-}
-
-/* Mikrofon-Bild */
-.mikrofon-logo {
-    width: 200px;
-    height: auto;
-    margin-bottom: 2rem;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
-}
-
-/* Überschrift und Text */
-h3 {
-    font-size: 1.4rem;
+    gap: 0.75rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #111;
-    margin-bottom: 1rem;
-}
-.text {
-    color: #444;
-    font-size: 1rem;
-    line-height: 1.6;
-    max-width: 360px;
-    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Aufnahme-Button */
-.aufnehmen {
-    background-color: #0078D4;
-    color: white;
-    font-size: 1rem;
+    .recording-button.ready {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+    }
+
+    .recording-button.recording {
+        background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+        color: white;
+        animation: recording-pulse 2s ease-in-out infinite;
+    }
+
+    .recording-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .recording-button:active {
+        transform: scale(0.98);
+    }
+
+@keyframes recording-pulse {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 10px 40px rgba(220, 53, 69, 0.7);
+    }
+}
+
+/* Icons */
+.icon {
+    font-size: 3rem;
+    font-style: normal;
+}
+
+    .icon.mic::before {
+        content: "🎙️";
+    }
+
+    .icon.stop::before {
+        content: "⏹️";
+    }
+
+.icon-check::before {
+    content: "✓";
+    margin-right: 0.5rem;
+}
+
+.icon-close::before {
+    content: "✕";
+    margin-right: 0.5rem;
+}
+
+/* Recording Info */
+.recording-info {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    min-width: 110px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 0.25rem;
+}
+
+.info-label {
+    font-size: 0.85rem;
     font-weight: 600;
-    padding: 0.9rem 2rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Transcription Review */
+.transcription-review {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+    .transcription-review label {
+        display: block;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .transcription-review textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+    }
+
+        .transcription-review textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    flex: 1;
+    padding: 1rem 1.5rem;
     border: none;
     border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.aufnehmen:hover {
-    background-color: #005fa3;
-    transform: translateY(-2px);
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20a03a 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+    .btn-success:hover {
+        background: linear-gradient(135deg, #20a03a 0%, #1e9638 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+    }
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+    }
+
+/* Note Section */
+.note-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+    .note-section label {
+        display: block;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+.note-input {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+    .note-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .note-input::placeholder {
+        color: #999;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-frame {
+        padding: 1rem;
+    }
+
+    .record-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .recording-button {
+        width: 160px;
+        height: 160px;
+        font-size: 1.1rem;
+    }
+
+    .icon {
+        font-size: 2.5rem;
+    }
+
+    .recording-info {
+        flex-wrap: wrap;
+    }
+
+    .info-item {
+        flex: 1;
+        min-width: 90px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .zurueck-wrapper {
+        top: 1rem;
+        left: 1rem;
+    }
 }
