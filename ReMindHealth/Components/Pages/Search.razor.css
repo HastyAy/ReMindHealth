@@ -1,15 +1,27 @@
 /* Search Page Styles */
 
 .app-frame {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9fafc;
 }
 
 .search-container {
-    max-width: 900px;
-    margin: 0 auto;
-    position: relative;
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh; /* fast voller Bildschirm */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Inhalt mittig */
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 /* Back Button */
@@ -40,31 +52,40 @@
 
 /* Page Title */
 .page-title {
+    display: flex; 
+    gap: 0.5rem;
     text-align: center;
-    color: white;
-    font-size: 2.5rem;
+    color: rgb(7, 2, 2);
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 2rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Search Box */
-.search-box {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+.search-box {   
+  display: grid;
+  grid-template-columns: 1fr auto; /* Input füllt, Button kompakt rechts */
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 600px;    /* die eigentliche Breite der Suchleiste */
+  margin: 0;           /* innerhalb der Section zentriert durch container */
 }
+
 
 .search-input {
-    flex: 1;
-    padding: 1.25rem 1.5rem;
-    border: none;
-    border-radius: 16px;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
+  width: 100%;
+  padding: 0.9rem 1rem;              /* gleiche Höhe wie dein next-btn */
+  border: 1px solid #e5e7eb;         /* feiner Rand für Kontrast */
+  border-radius: 12px;               /* Kapsel-Rundung */
+  font-size: 1rem;
+  color: #111827;
+  background-color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); /* etwas tieferer Schatten */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
+
+}
     .search-input:focus {
         outline: none;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -74,19 +95,21 @@
     .search-input::placeholder {
         color: #999;
     }
-
+  
 .search-button {
-    padding: 1.25rem 2.5rem;
-    background: white;
-    color: #667eea;
-    border: none;
-    border-radius: 16px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    white-space: nowrap;
+   
+  padding: 0.9rem 1.1rem;
+  background-color: #0078D4;  /* kräftiges Blau (ähnlich Fluent) */
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+
 }
 
     .search-button:hover:not(:disabled) {

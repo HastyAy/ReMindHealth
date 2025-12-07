@@ -15,14 +15,20 @@
             <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
         </button>
 
-        <h2 class="page-title">🔍 Krankheiten suchen</h2>
+        <h2 class="page-title">
+        Krankheiten/Diagnosen durchsuchen 
+        🔍 
+        </h2>
+         <p>
+            Suchen Sie nach einer Krankheit, um eine einfache Erklärung zu erhalten.
+        </p>
 
         <div class="search-box">
             <input type="text"
                    @bind="searchQuery"
                    @bind:event="oninput"
                    @onkeypress="HandleKeyPress"
-                   placeholder="z.B. Grippe, Diabetes, Migräne..."
+                   placeholder="Geben sie den Namen einer Krankheit ein"
                    class="search-input" />
             <button @onclick="PerformSearch" class="search-button" disabled="@isSearching">
                 @if (isSearching)

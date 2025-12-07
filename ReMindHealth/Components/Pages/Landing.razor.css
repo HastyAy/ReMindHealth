@@ -45,10 +45,11 @@
     transform: translateY(-2px);
 }
 
-/* Bild */
+
 .mobile-image {
-    width: 120px;
-    margin: 0 auto 1rem auto;
+    width: 340px;
+    height: auto;
+    margin: 0 auto 1.5rem; /* etwas mehr Luft unter dem Bild */
 }
 
 /* Text */
