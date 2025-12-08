@@ -6,6 +6,7 @@
     align-items: center;
     height: 100vh;
     background-color: #f9fafc;
+    padding: 1rem;
 }
 
 .search-container {
@@ -17,10 +18,12 @@
     height: 90vh; /* fast voller Bildschirm */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Inhalt mittig */
-    align-items: center;
-    text-align: center;
+    justify-content: flex-start; /* Inhalt mittig */
+    align-items: stretch;
+    text-align: left;
     padding: 2rem 1.5rem;
+    overflow-y: auto;
+    gap: 1rem;
     font-family: "Segoe UI", system-ui, sans-serif;
 }
 
