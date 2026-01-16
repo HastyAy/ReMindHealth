@@ -139,7 +139,11 @@ Implementierungen für:
 - Zusammenfassungen  
 
 ---
+## Lizenz
+Dieses Projekt wurde im Rahmen eines Hochschulprojekts entwickelt.
+Keine kommerzielle Nutzung ohne Genehmigung.
 
+----
 ##  Team & Rollen
 
 - **Jakob Gauch** – Projektorganisation, Figma‑Design, Logo, Value Proposition  
