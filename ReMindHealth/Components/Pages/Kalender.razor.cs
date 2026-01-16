@@ -3,7 +3,6 @@ using ReMindHealth.Application.Interfaces.IServices;
 using ReMindHealth.Domain.Models;
 
 namespace ReMindHealth.Components.Pages;
-
 public partial class Kalender
 {
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
@@ -89,6 +88,7 @@ public partial class Kalender
             }
 
             var userId = await UserService.GetCurrentUserIdAsync();
+
 
             newTermin.UserId = userId;
             newTermin.ConversationId = null;

@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100dvh;
   background-color: #f9fafc;
 }
 
@@ -13,14 +13,14 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 430px;
-    height: 90vh; 
+    height: 90dvh; 
     display: flex;
     flex-direction: column;
     justify-content: flex-start; 
     align-items: stretch;
     text-align: left;
     padding: 2rem 1.5rem;
-    overflow-y: auto;
+    overflow: hidden;
     gap: 1rem;
     font-family: "Segoe UI", system-ui, sans-serif;
 
@@ -63,8 +63,8 @@
 }
 
 .zurueck-button {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 .greeting {
@@ -308,7 +308,7 @@
 
 .termin-header-row {
     display: flex;
-    align-items: center;       /* sorgt dafür, dass Icon und Buttons vertikal zentriert sind */
+    align-items: flex-start;     /* sorgt dafür, dass Icon und Buttons vertikal zentriert sind */
     justify-content: space-between;
     margin-bottom: 1rem;
 }
@@ -316,6 +316,7 @@
 .termin-icon i {
     font-size: 2rem;
     color: #667eea;
+    transform: translateY(-10px); /* höher */
 }
 
 
@@ -377,7 +378,7 @@
 }
 /* Overlay */
 .modal-overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.35);
     display: flex;
