@@ -9,30 +9,25 @@
     padding: 1rem;
 }
 
-/* Back Button */
-.zurueck-wrapper {
-    position: fixed;
-    top: 1.5rem;
-    left: 1.5rem;
-    background: white;
-    border: none;
-    padding: 0.75rem;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    transition: all 0.3s ease;
+
+
+.header-with-back {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-    .zurueck-wrapper:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
+.zurueck-wrapper {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
 
 .zurueck-button {
-    width: 32px;
-    height: 32px;
-    display: block;
+    width: 30px;
+    height: 30px;
 }
 
 /* Recording Container */

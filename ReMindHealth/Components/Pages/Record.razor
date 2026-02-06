@@ -5,12 +5,12 @@
 @layout AppLayout
 <RadzenNotification/>
 <div class="app-frame">
-    <button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")'>
-        <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
-    </button>
-
     <div class="record-container">
-        <div class="card-header">
+
+        <div class="header-with-back">
+            <button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")'>
+                <img src="images/54517.png" alt="Zurück" class="zurueck-button" />
+            </button>
             <h2>Neue Aufnahme</h2>
             <div class="status-indicator">
                 <span class="status-dot @(isRecording ? "recording" : "ready")"></span>

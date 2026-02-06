@@ -7,8 +7,8 @@
 <div class="app-frame">
     <div class="home-container">
         <div class="header-with-back">
-            <button class="zurueck-wrapper" @onclick="Zurueck">
-                <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
+            <button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")'>
+                <img src="images/54517.png" alt="Zurück" class="zurueck-button" />
             </button>
             <h2 class="greeting">Zusammenfassungen</h2>
         </div>
@@ -60,7 +60,7 @@
                             </div>
                             <div class="conversation-info">
                                 <h4 class="conversation-title">@conversation.Title</h4>
-                                <p class="conversation-date">@conversation.RecordedAt.ToLocalTime().ToString("dd. MMM yyyy, HH:mm")</p>
+                                <p class="conversation-date">@conversation.RecordedAt.ToString("dd. MMM yyyy, HH:mm")</p>
                             </div>
                             <button class="favorite-button" @onclick="() => ToggleFavorite(conversation)" @onclick:stopPropagation="true">
                                 <i class="bi bi-star@(conversation.IsFavorite ? "-fill" : "")"

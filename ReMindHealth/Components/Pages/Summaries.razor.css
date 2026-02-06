@@ -5,12 +5,7 @@
     padding: 1rem 2rem;
 }
 
-.header-with-back {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
+
 
 .summary-list {
     display: flex;
@@ -18,7 +13,13 @@
     gap: 1rem;
 }
 
-/* Back Button */
+.header-with-back {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 .zurueck-wrapper {
     background: none;
     border: none;
@@ -27,8 +28,8 @@
 }
 
 .zurueck-button {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 /* Filter Controls */
