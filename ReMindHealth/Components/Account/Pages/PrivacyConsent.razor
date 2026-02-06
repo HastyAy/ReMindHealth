@@ -6,11 +6,12 @@
 
 
 <div class="privacy-consent-container">
+ <div class="consent-card">
     <div class="consent-header">
     
-<button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")''>
+  <button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")''>
     <img src="images/54517.png" alt="Zurück" class="zurueck-button" />
-</button>
+ </button>
 
     <h1 class="consent-title">Einverständnis erforderlich</h1>
         <img src="images/einverstaenis.png" alt="Arztgespräch Illustration" class="mobile-image" />
@@ -48,6 +49,7 @@
             </ul>
         </div>
     </div>
+ </div> 
 </div>
 
 @code {
