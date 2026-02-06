@@ -4,13 +4,15 @@
 @inject IUserService UserService
 @rendermode InteractiveServer
 
-<button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")'>
-    <img src="images/zurueck.png" alt="Zurück" class="zurueck-button" />
-</button>
 
 <div class="privacy-consent-container">
-    <div class="consent-card">
-        <h1>Einverständnis erforderlich</h1>
+    <div class="consent-header">
+    
+<button class="zurueck-wrapper" @onclick='() => NavigationManager.NavigateTo("/dashboard")''>
+    <img src="images/54517.png" alt="Zurück" class="zurueck-button" />
+</button>
+
+    <h1 class="consent-title">Einverständnis erforderlich</h1>
         <img src="images/einverstaenis.png" alt="Arztgespräch Illustration" class="mobile-image" />
 
         <div class="consent-text">
