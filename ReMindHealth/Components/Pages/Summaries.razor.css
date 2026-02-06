@@ -1,8 +1,28 @@
 ﻿/* Container and Layout */
+/* Gesamt-Layout */
+.app-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f9fafc;
+    padding: 1rem;
+}
+
+/* Weißer Handy-Container */
 .home-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
+    background-color: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 430px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 2rem 1.5rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    overflow-y: auto;
 }
 
 
