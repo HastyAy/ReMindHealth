@@ -57,15 +57,19 @@
 }
 
 .page-title {
-    display: flex; 
-    gap: 0.5rem;
-    text-align: center;
-    color: rgb(7, 2, 2);
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+
     
+} 
+
+.header-spacer { 
+    width: 24px; /* gleiche Breite wie der Pfeil */ 
 }
 
 .search-box {   

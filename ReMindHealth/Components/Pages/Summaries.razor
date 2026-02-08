@@ -60,7 +60,7 @@
                             </div>
                             <div class="conversation-info">
                                 <h4 class="conversation-title">@conversation.Title</h4>
-                                <p class="conversation-date">@conversation.RecordedAt.ToString("dd. MMM yyyy, HH:mm")</p>
+                                <p class="conversation-date">@conversation.RecordedAt.ToString(format: "dd. MMM yyyy, HH:mm")</p>
                             </div>
                             <button class="favorite-button" @onclick="() => ToggleFavorite(conversation)" @onclick:stopPropagation="true">
                                 <i class="bi bi-star@(conversation.IsFavorite ? "-fill" : "")"
