@@ -37,37 +37,39 @@
         {
             <div class="termin-list">
                 @foreach (var termin in termine)
-    {
-        var status = GetDueStatus(termin);
+                {
+                    var status = GetDueStatus(termin);
 
-        <div class="termin-item @(status) @(selectedTermin?.AppointmentId == termin.AppointmentId ? "active" : "")"
-             @onclick="() => SelectTermin(termin)">
-            <div class="termin-date">
-                @termin.AppointmentDateTime.ToLocalTime().ToString("dddd dd. MMM", new System.Globalization.CultureInfo("de-DE"))
+                    <div class="termin-item @(status) @(selectedTermin?.AppointmentId == termin.AppointmentId ? "active" : "")"
+                         @onclick="() => SelectTermin(termin)">
+                        <div class="termin-date">
+                            @termin.AppointmentDateTime.ToLocalTime().ToString("dddd dd. MMM", new
+                            System.Globalization.CultureInfo("de-DE"))
+                        </div>
+                        <div class="termin-time">
+                            @termin.AppointmentDateTime.ToLocalTime().ToString("HH:mm")
+                        </div>
+                    </div>
+                }
             </div>
-            <div class="termin-time">
-                @termin.AppointmentDateTime.ToLocalTime().ToString("HH:mm")
-            </div>
-        </div>
-    }
-            </div>
+
 
             @if (selectedTermin != null)
             {
                 <div class="termin-detail">
                     <div class="termin-header-row">
-                    <div class="termin-icon"> 
-                        <i class="bi bi-calendar-check-fill"></i> 
-                    </div>
-                    <!-- Action Buttons -->
-                    <div class="termin-actions">
-                        <button class="btn-edit" @onclick="OpenEditModal" title="Bearbeiten">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                        <button class="btn-delete" @onclick="OpenDeleteConfirm" title="Löschen">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </div>
+                        <div class="termin-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="termin-actions">
+                            <button class="btn-edit" @onclick="OpenEditModal" title="Bearbeiten">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button class="btn-delete" @onclick="OpenDeleteConfirm" title="Löschen">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </div>
                     </div>
 
                     @if (string.IsNullOrWhiteSpace(selectedTermin.Title))
@@ -116,59 +118,6 @@
                     }
                 </div>
             }
-
-            
-             @if (showAddModal)
-        {
-              <div class="modal-overlay" @onclick="CloseAddModal">
-                    <div class="modal-content" @onclick:stopPropagation="true">
-                        <div class="modal-header">
-                        <h5 class="modal-title">Neuer Termin</h5>
-                        <button type="button" class="btn-close" @onclick="CloseAddModal"></button>
-                    </div>
-                    <div class="modal-body">
-                        @if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            <div class="alert alert-danger">@errorMessage</div>
-                        }
-
-                        <div class="mb-3">
-                            <label class="form-label">Titel *</label>
-                            <input type="text" class="form-control" @bind="newTermin.Title" placeholder="z.B. Arzttermin" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Datum und Uhrzeit *</label>
-                            <input type="datetime-local" class="form-control" @bind="newTermin.AppointmentDateTime" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Beschreibung</label>
-                            <textarea class="form-control" rows="3" @bind="newTermin.Description" placeholder="Optional"></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Ort</label>
-                            <input type="text" class="form-control" @bind="newTermin.Location" placeholder="Optional" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Dauer (Minuten)</label>
-                            <input type="number" class="form-control" @bind="newTermin.DurationMinutes" placeholder="Optional" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Teilnehmer</label>
-                            <input type="text" class="form-control" @bind="newTermin.AttendeeNames" placeholder="Optional, z.B. Dr. Schmidt" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="CloseAddModal">Abbrechen</button>
-                        <button type="button" class="btn btn-primary" @onclick="SaveNewTermin">Speichern</button>
-                    </div>
-                </div>
-            </div>
-        }
 
             <!-- Edit Modal -->
             @if (showEditModal)
@@ -239,6 +188,61 @@
                 </div>
             }
         }
+    @if (showAddModal)
+            {
+                <div class="modal-overlay" @onclick="CloseAddModal">
+                    <div class="modal-content" @onclick:stopPropagation="true">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Neuer Termin</h5>
+                            <button type="button" class="btn-close" @onclick="CloseAddModal"></button>
+                        </div>
+                        <div class="modal-body">
+                            @if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                <div class="alert alert-danger">@errorMessage</div>
+                            }
+
+                            <div class="mb-3">
+                                <label class="form-label">Titel *</label>
+                                <input type="text" class="form-control" @bind="newTermin.Title" placeholder="z.B. Arzttermin" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Datum und Uhrzeit *</label>
+                                <input type="datetime-local" class="form-control" @bind="newTermin.AppointmentDateTime" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Beschreibung</label>
+                                <textarea class="form-control" rows="3" @bind="newTermin.Description"
+                                          placeholder="Optional"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ort</label>
+                                <input type="text" class="form-control" @bind="newTermin.Location" placeholder="Optional" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Dauer (Minuten)</label>
+                                <input type="number" class="form-control" @bind="newTermin.DurationMinutes"
+                                       placeholder="Optional" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Teilnehmer</label>
+                                <input type="text" class="form-control" @bind="newTermin.AttendeeNames"
+                                       placeholder="Optional, z.B. Dr. Schmidt" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @onclick="CloseAddModal">Abbrechen</button>
+                            <button type="button" class="btn btn-primary" @onclick="SaveNewTermin">Speichern</button>
+                        </div>
+                    </div>
+                </div>
+            }
+    
     </div>
 
 </div>
