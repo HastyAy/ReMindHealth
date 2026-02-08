@@ -315,6 +315,8 @@
     margin-bottom: 1rem;
 }
 
+.header-spacer { width: 24px; /* gleiche Breite wie der Pfeil */ }
+
 .termin-icon i {
     font-size: 2rem;
     color: #667eea;
