@@ -157,13 +157,22 @@ Keine kommerzielle Nutzung ohne Genehmigung.
 
 ##  Installation & Start
 
+Vor dem ersten Start `.env.example` nach `.env` kopieren und die Werte eintragen (Postgres‑Passwort, AssemblyAI‑ und Gemini‑API‑Keys). Die Datei `.env` ist bewusst in `.gitignore` ausgeschlossen.
+
+```bash
+cp .env.example .env
+```
+
 ###  Lokal starten
 ```bash
 git clone https://github.com/HastyAy/ReMindHealth.git
 cd ReMindHealth
 dotnet run
+```
 
 ### Mit Docker starten
+```bash
 docker-compose up --build
+```
 
 
