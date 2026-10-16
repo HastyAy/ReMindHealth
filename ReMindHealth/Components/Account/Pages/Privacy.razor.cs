@@ -8,7 +8,6 @@ public partial class Privacy
     private bool check1 = false;
     private bool check2 = false;
     private bool check3 = false;
-    private bool isLoading = false;
     private bool hasCheckedPrivacy = false;
 
     private bool allChecked => check1 && check2 && check3;
@@ -35,8 +34,6 @@ public partial class Privacy
     {
         if (!allChecked) return;
 
-        isLoading = true;
-
         try
         {
             var success = await UserService.AcceptPrivacyPolicyAsync();
@@ -49,10 +46,6 @@ public partial class Privacy
         catch (Exception ex)
         {
             Console.WriteLine($"Error accepting privacy: {ex.Message}");
-        }
-        finally
-        {
-            isLoading = false;
         }
     }
 }
