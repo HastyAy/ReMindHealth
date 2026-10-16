@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_DB=remindhealth
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Pass321@strongone
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=en_US.UTF-8
     ports:
       - "5432:5432"
@@ -35,7 +35,7 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       
       # PostgreSQL Connection (replaced SQL Server)
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=remindhealth;Username=postgres;Password=Pass321@strongone
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=remindhealth;Username=postgres;Password=${POSTGRES_PASSWORD}
       
       - AssemblyAI__ApiKey=${ASSEMBLYAI_API_KEY}
       
