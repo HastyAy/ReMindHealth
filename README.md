@@ -1,6 +1,8 @@
 # ReMindHealth  
 Eine KI‑gestützte Webanwendung zur automatischen Extraktion, Strukturierung und verständlichen Darstellung medizinischer Informationen aus Arztgesprächen.
 
+**Status:** Hochschulprojekt, 2024/2025. Der Fokus lag auf dem End-to-End-Flow (Aufnahme → Transkription → KI-Extraktion → Darstellung) in einer Blazor-Server-Anwendung mit Integration externer KI-Dienste (AssemblyAI, Gemini). Die vorhandenen Unit Tests prüfen überwiegend Mock-Weiterleitungen und keine echte Business-Logik.
+
 ---
 
 ##  Projektüberblick
@@ -14,7 +16,7 @@ Die Anwendung ermöglicht:
 - die strukturierte Darstellung der Ergebnisse  
 - die Verwaltung aller extrahierten und manuellen Termine  
 
-Die Web‑App basiert auf **Blazor Server** und folgt einer **Clean‑Architecture‑Struktur**.
+Die Web‑App basiert auf **Blazor Server** und ist in mehreren Schichten (UI, Application, Domain, Infrastructure, Tests) organisiert.
 
 ---
 
@@ -70,7 +72,7 @@ Die Web‑App basiert auf **Blazor Server** und folgt einer **Clean‑Architectu
 
 ##  Architekturüberblick
 
-Das Projekt folgt einer **Clean Architecture** mit klarer Trennung der Schichten:
+Das Projekt ist in mehrere Schichten unterteilt:
 
 ReMindHealth.sln
 │
